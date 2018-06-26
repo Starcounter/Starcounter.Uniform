@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>Patryk Szwermer</authors>
+    <owners>$author$</owners>
+    <licenseUrl>https://github.com/Starcounter/Starcounter.Uniform/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/Starcounter/Starcounter.Uniform</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Helper library for server-side part of uniform components.</description>
+    <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
+    <copyright>Copyright 2018</copyright>
+    <tags>Starcounter Uniform</tags>
+  </metadata>
+</package>
