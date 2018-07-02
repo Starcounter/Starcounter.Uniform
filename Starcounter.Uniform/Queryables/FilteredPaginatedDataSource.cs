@@ -13,7 +13,7 @@ namespace Starcounter.Uniform.Queryables
     /// <typeparam name="TViewModel"></typeparam>
     public class FilteredPaginatedDataSource<TData, TViewModel> : IFilteredDataSource<TViewModel>
     {
-        private readonly IQueryableFilterSorter<TData> _filterSorter;
+        private readonly IQueryableFilter<TData> _filter;
         private readonly IQueryablePaginator<TData, TViewModel> _paginator;
 
         private readonly IQueryable<TData> _dataSource;
@@ -22,12 +22,12 @@ namespace Starcounter.Uniform.Queryables
         private readonly Func<TData, TViewModel> _converter;
         private FilterOrderConfiguration _filterOrderConfiguration;
 
-        public FilteredPaginatedDataSource(IQueryableFilterSorter<TData> filterSorter,
+        public FilteredPaginatedDataSource(IQueryableFilter<TData> filter,
             IQueryablePaginator<TData, TViewModel> paginator,
             IQueryable<TData> dataSource,
             Func<TData, TViewModel> converter)
         {
-            _filterSorter = filterSorter;
+            _filter = filter;
             _paginator = paginator;
             _dataSource = dataSource;
             _converter = converter;
@@ -43,7 +43,7 @@ namespace Starcounter.Uniform.Queryables
             set
             {
                 _filterOrderConfiguration = value;
-                var filteredData = _filterSorter.ApplyFilterAndOrder(_dataSource, value);
+                var filteredData = _filter.Apply(_dataSource, value);
                 CurrentPageRows = _paginator.GetRows(filteredData, PaginationConfiguration, _converter);
                 TotalRows = _paginator.GetTotalRows(filteredData);
             }
