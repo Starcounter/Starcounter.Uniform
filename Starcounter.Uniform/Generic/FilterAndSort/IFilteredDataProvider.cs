@@ -6,12 +6,12 @@ using Starcounter.Uniform.Queryables;
 namespace Starcounter.Uniform.Generic.FilterAndSort
 {
     /// <summary>
-    /// Data source ready to be consumed by the data table control.
-    /// Usually the app developer can use <see cref="FilteredPaginatedDataSource{TData,TViewModel}"/>, created using <see cref="DataTableBuilder{TViewModel}"/>.
+    /// Provides data to the data table control.
+    /// Usually the app developer can use <see cref="FilteredPaginatedDataProvider{TData,TViewModel}"/>, created using <see cref="DataTableBuilder{TViewModel}"/>.
     /// This interface can be implemented to expose data that is not <see cref="IQueryable"/>.
     /// </summary>
     /// <typeparam name="TViewModel"></typeparam>
-    public interface IFilteredDataSource<out TViewModel> : IPaginatedDataSource<TViewModel>
+    public interface IFilteredDataProvider<out TViewModel> : IPaginatedDataProvider<TViewModel>
     {
         /// <summary>
         /// Implementers MUST ignore this property if it's null. This is to preserve the Liskov Substitution Principle

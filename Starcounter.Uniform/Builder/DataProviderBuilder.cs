@@ -5,10 +5,10 @@ using Starcounter.Uniform.Queryables;
 namespace Starcounter.Uniform.Builder
 {
     /// <summary>
-    /// Provides fluent API to create instances of <see cref="FilteredPaginatedDataSource{TData,TViewModel}"/>
+    /// Provides fluent API to create instances of <see cref="FilteredPaginatedDataProvider{TData,TViewModel}"/>
     /// </summary>
     /// <typeparam name="TData">The type of original data, available as a queryable</typeparam>
-    /// <typeparam name="TViewModel">The type of view-models that will be exposed by the data source</typeparam>
+    /// <typeparam name="TViewModel">The type of view-models that will be exposed by the data provider</typeparam>
     public class DataProviderBuilder<TData, TViewModel>
         where TViewModel : Json, new()
     {
@@ -61,13 +61,13 @@ namespace Starcounter.Uniform.Builder
         }
 
         /// <summary>
-        /// Builds a <see cref="FilteredPaginatedDataSource{TData,TViewModel}"/>
+        /// Builds a <see cref="FilteredPaginatedDataProvider{TData,TViewModel}"/>
         /// </summary>
         /// <returns></returns>
         /// <remarks>This method is not intended to be used by app developers directly. Rather, they should use it as part of <see cref="DataTableBuilder{TViewModel}"/></remarks>
-        public FilteredPaginatedDataSource<TData, TViewModel> Build()
+        public FilteredPaginatedDataProvider<TData, TViewModel> Build()
         {
-            return new FilteredPaginatedDataSource<TData, TViewModel>(_filter,
+            return new FilteredPaginatedDataProvider<TData, TViewModel>(_filter,
                 new QueryablePaginator<TData, TViewModel>(),
                 _queryable,
                 _converter

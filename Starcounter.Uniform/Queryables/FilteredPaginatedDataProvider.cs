@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Starcounter.Uniform.Builder;
 using Starcounter.Uniform.Generic.FilterAndSort;
 using Starcounter.Uniform.Generic.Pagination;
 
 namespace Starcounter.Uniform.Queryables
 {
     /// <summary>
-    /// This is the typical implementation of <see cref="IFilteredDataSource{TViewModel}"/> used when
-    /// the source data is a queryable.
+    /// This is the typical implementation of <see cref="IFilteredDataProvider{TViewModel}"/> used when
+    /// the source data is a queryable. Instances of this class can be created using <see cref="DataProviderBuilder{TData,TViewModel}"/> or <see cref="DataTableBuilder{TViewModel}"/>
     /// </summary>
     /// <typeparam name="TViewModel"></typeparam>
-    public class FilteredPaginatedDataSource<TData, TViewModel> : IFilteredDataSource<TViewModel>
+    /// <typeparam name="TData"></typeparam>
+    public class FilteredPaginatedDataProvider<TData, TViewModel> : IFilteredDataProvider<TViewModel>
     {
         private readonly IQueryableFilter<TData> _filter;
         private readonly IQueryablePaginator<TData, TViewModel> _paginator;
@@ -22,7 +24,7 @@ namespace Starcounter.Uniform.Queryables
         private readonly Func<TData, TViewModel> _converter;
         private FilterOrderConfiguration _filterOrderConfiguration;
 
-        public FilteredPaginatedDataSource(IQueryableFilter<TData> filter,
+        public FilteredPaginatedDataProvider(IQueryableFilter<TData> filter,
             IQueryablePaginator<TData, TViewModel> paginator,
             IQueryable<TData> dataSource,
             Func<TData, TViewModel> converter)

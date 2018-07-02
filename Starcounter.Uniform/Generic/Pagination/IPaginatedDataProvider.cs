@@ -6,7 +6,7 @@ namespace Starcounter.Uniform.Generic.Pagination
     /// Consumed by pagination controls
     /// </summary>
     /// <typeparam name="TViewModel"></typeparam>
-    public interface IPaginatedDataSource<out TViewModel>
+    public interface IPaginatedDataProvider<out TViewModel>
     {
         PaginationConfiguration PaginationConfiguration { get; set; }
         IReadOnlyCollection<TViewModel> CurrentPageRows { get; }

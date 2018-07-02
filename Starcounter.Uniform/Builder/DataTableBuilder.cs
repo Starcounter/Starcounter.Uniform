@@ -15,7 +15,7 @@ namespace Starcounter.Uniform.Builder
     {
         public const int DefaultPageSize = 20;
 
-        private IFilteredDataSource<TViewModel> _dataSource;
+        private IFilteredDataProvider<TViewModel> _dataProvider;
         private IReadOnlyCollection<DataTableColumn> _columns = new DataTableColumn[0];
         private int _initialPageIndex = 0;
         private int _initialPageSize = DefaultPageSize;
@@ -32,7 +32,7 @@ namespace Starcounter.Uniform.Builder
         {
             var builder = new DataProviderBuilder<TData, TViewModel>(queryable);
             configure(builder);
-            _dataSource = builder.Build();
+            _dataProvider = builder.Build();
 
             return this;
         }
@@ -50,15 +50,15 @@ namespace Starcounter.Uniform.Builder
         }
 
         /// <summary>
-        /// Specify the data source for the table. This method allows the developer to use custom implementation of <see cref="IFilteredDataSource{TViewModel}"/>.
+        /// Specify the data source for the table. This method allows the developer to use custom implementation of <see cref="IFilteredDataProvider{TViewModel}"/>.
         /// It's usually sufficient to use other overloads that accept <see cref="IQueryable{TData}"/> directly
         /// </summary>
-        /// <param name="dataSource">The data source object</param>
+        /// <param name="dataProvider">The data source object</param>
         /// <returns>The original builder object</returns>
         /// <remarks>This method changes and returns the original builder object</remarks>
-        public DataTableBuilder<TViewModel> WithDataSource(IFilteredDataSource<TViewModel> dataSource)
+        public DataTableBuilder<TViewModel> WithDataSource(IFilteredDataProvider<TViewModel> dataProvider)
         {
-            _dataSource = dataSource;
+            _dataProvider = dataProvider;
 
             return this;
         }
@@ -109,12 +109,12 @@ namespace Starcounter.Uniform.Builder
 
         public Json Build()
         {
-            if (_dataSource == null)
+            if (_dataProvider == null)
             {
                 throw new InvalidOperationException($"DataSource has not been configured. Call one of {nameof(WithDataSource)} overloads before calling {nameof(Build)}");
             }
 
-            // use _dataSource, _columns, _initialPageIndex and _initialPageSize
+            // use _dataProvider, _columns, _initialPageIndex and _initialPageSize
             return new Json();
         }
 
