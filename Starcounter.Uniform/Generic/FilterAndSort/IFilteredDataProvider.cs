@@ -14,8 +14,9 @@ namespace Starcounter.Uniform.Generic.FilterAndSort
     public interface IFilteredDataProvider<out TViewModel> : IPaginatedDataProvider<TViewModel>
     {
         /// <summary>
-        /// Implementers MUST ignore this property if it's null. This is to preserve the Liskov Substitution Principle
+        /// Set it, or change its properties to change the value of <see cref="IPaginatedDataProvider{TViewModel}.CurrentPageRows"/>
         /// </summary>
+        /// <remarks>Implementers MUST ignore this property if it's null. This is to preserve the Liskov Substitution Principle</remarks>
         FilterOrderConfiguration FilterOrderConfiguration { get; set; }
     }
 }

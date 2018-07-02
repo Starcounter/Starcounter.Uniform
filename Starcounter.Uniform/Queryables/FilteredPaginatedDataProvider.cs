@@ -22,7 +22,8 @@ namespace Starcounter.Uniform.Queryables
 
         // todo: I don't like having this here. I'd like it better to be overridden like ApplyFilter in SorterFilter
         private readonly Converter<TData, TViewModel> _converter;
-        private FilterOrderConfiguration _filterOrderConfiguration;
+        private IReadOnlyCollection<TViewModel> _currentPageRows;
+        private int _totalRows;
 
         public FilteredPaginatedDataProvider(IQueryableFilter<TData> filter,
             IQueryablePaginator<TData, TViewModel> paginator,
@@ -36,19 +37,33 @@ namespace Starcounter.Uniform.Queryables
         }
 
         public PaginationConfiguration PaginationConfiguration { get; set; }
-        public IReadOnlyCollection<TViewModel> CurrentPageRows { get; private set; }
-        public int TotalRows { get; private set; }
 
-        public FilterOrderConfiguration FilterOrderConfiguration
+        public FilterOrderConfiguration FilterOrderConfiguration { get; set; }
+
+        // TODO: Reload rows should be called only after pagination or filter has been changed
+        public IReadOnlyCollection<TViewModel> CurrentPageRows
         {
-            get => _filterOrderConfiguration;
-            set
+            get
             {
-                _filterOrderConfiguration = value;
-                var filteredData = _filter.Apply(_dataSource, value);
-                CurrentPageRows = _paginator.GetRows(filteredData, PaginationConfiguration, _converter);
-                TotalRows = _paginator.GetTotalRows(filteredData);
+                ReloadRows();
+                return _currentPageRows;
             }
+        }
+
+        public int TotalRows
+        {
+            get
+            {
+                ReloadRows();
+                return _totalRows;
+            }
+        }
+
+        private void ReloadRows()
+        {
+            var filteredData = _filter.Apply(_dataSource, FilterOrderConfiguration);
+            _currentPageRows = _paginator.GetRows(filteredData, PaginationConfiguration, _converter);
+            _totalRows = _paginator.GetTotalRows(filteredData);
         }
     }
 }

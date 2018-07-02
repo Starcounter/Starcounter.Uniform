@@ -7,7 +7,7 @@ namespace Starcounter.Uniform.Queryables
 {
     /// <summary>
     /// This is the typical implementation of <see cref="IPaginatedDataProvider{TViewModel}"/> used when
-    /// the source data is a queryable.
+    /// the data source is a queryable.
     /// </summary>
     /// <typeparam name="TData"></typeparam>
     /// <typeparam name="TViewModel"></typeparam>
