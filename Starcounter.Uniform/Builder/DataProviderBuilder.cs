@@ -14,7 +14,7 @@ namespace Starcounter.Uniform.Builder
     {
         private readonly IQueryable<TData> _queryable;
         private IQueryableFilter<TData> _filter;
-        private Func<TData, TViewModel> _converter;
+        private Converter<TData, TViewModel> _converter;
 
         /// <summary>
         /// Construct new <see cref="DataProviderBuilder{TData,TViewModel}"/> instance
@@ -54,7 +54,7 @@ namespace Starcounter.Uniform.Builder
         /// <param name="converter">The delegate that will handle creating view-models, usually with input data bound to Data property.</param>
         /// <returns>The original builder object</returns>
         /// <remarks>This method changes and returns the original builder object</remarks>
-        public DataProviderBuilder<TData, TViewModel> WithConverter(Func<TData, TViewModel> converter)
+        public DataProviderBuilder<TData, TViewModel> WithConverter(Converter<TData, TViewModel> converter)
         {
             _converter = converter;
             return this;

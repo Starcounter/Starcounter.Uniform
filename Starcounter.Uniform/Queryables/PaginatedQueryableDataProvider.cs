@@ -15,12 +15,12 @@ namespace Starcounter.Uniform.Queryables
         where TViewModel : Json, new()
     {
         private readonly IQueryable<TData> _queryable;
-        private readonly Func<TData, TViewModel> _converter;
+        private readonly Converter<TData, TViewModel> _converter;
         private readonly IQueryablePaginator<TData, TViewModel> _paginator;
 
         public PaginatedQueryableDataProvider(
             IQueryable<TData> queryable,
-            Func<TData, TViewModel> converter,
+            Converter<TData, TViewModel> converter,
             IQueryablePaginator<TData, TViewModel> paginator)
         {
             _queryable = queryable;

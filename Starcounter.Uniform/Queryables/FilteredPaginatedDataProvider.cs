@@ -21,13 +21,13 @@ namespace Starcounter.Uniform.Queryables
         private readonly IQueryable<TData> _dataSource;
 
         // todo: I don't like having this here. I'd like it better to be overridden like ApplyFilter in SorterFilter
-        private readonly Func<TData, TViewModel> _converter;
+        private readonly Converter<TData, TViewModel> _converter;
         private FilterOrderConfiguration _filterOrderConfiguration;
 
         public FilteredPaginatedDataProvider(IQueryableFilter<TData> filter,
             IQueryablePaginator<TData, TViewModel> paginator,
             IQueryable<TData> dataSource,
-            Func<TData, TViewModel> converter)
+            Converter<TData, TViewModel> converter)
         {
             _filter = filter;
             _paginator = paginator;

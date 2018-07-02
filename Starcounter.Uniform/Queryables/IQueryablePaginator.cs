@@ -17,7 +17,7 @@ namespace Starcounter.Uniform.Queryables
         IReadOnlyCollection<TViewModel> GetRows(
             IQueryable<TData> data,
             PaginationConfiguration paginationConfiguration,
-            Func<TData, TViewModel> converter);
+            Converter<TData, TViewModel> converter);
 
         int GetTotalRows(IQueryable<TData> data);
     }
