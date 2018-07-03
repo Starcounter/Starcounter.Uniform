@@ -133,13 +133,17 @@ namespace Starcounter.Uniform.ViewModels
                     {
                         order.Direction = ParseOrderDirection(action.Value);
                     }
+                    else
+                    {
+                        order = null;
+                    }
                 }
                 else
                 {
-                    DataProvider.FilterOrderConfiguration.Filters.Add(new Filter
+                    DataProvider.FilterOrderConfiguration.Ordering.Add(new Order
                     {
                         PropertyName = this.PropertyName,
-                        Value = action.Value
+                        Direction = ParseOrderDirection(action.Value)
                     });
                 }
             }
