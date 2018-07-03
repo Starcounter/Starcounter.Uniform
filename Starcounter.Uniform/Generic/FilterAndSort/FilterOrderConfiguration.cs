@@ -7,7 +7,7 @@ namespace Starcounter.Uniform.Generic.FilterAndSort
     /// </summary>
     public class FilterOrderConfiguration
     {
-        public IReadOnlyCollection<Filter> Filters { get; set; }
-        public IReadOnlyCollection<Order> Ordering { get; set; }
+        public ICollection<Filter> Filters { get; set; }
+        public ICollection<Order> Ordering { get; set; }
     }
 }

@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Starcounter.Uniform.Generic.FilterAndSort;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using Starcounter.Uniform.Generic.FilterAndSort;
 
 namespace Starcounter.Uniform.Queryables
 {
@@ -23,7 +23,7 @@ namespace Starcounter.Uniform.Queryables
             return data;
         }
 
-        private IQueryable<TData> ApplyFilters(IQueryable<TData> data, IReadOnlyCollection<Filter> filters)
+        private IQueryable<TData> ApplyFilters(IQueryable<TData> data, ICollection<Filter> filters)
         {
             foreach (var filter in filters)
             {
@@ -33,7 +33,7 @@ namespace Starcounter.Uniform.Queryables
             return data;
         }
 
-        private IQueryable<TData> ApplyOrdering(IQueryable<TData> data, IReadOnlyCollection<Order> ordering)
+        private IQueryable<TData> ApplyOrdering(IQueryable<TData> data, ICollection<Order> ordering)
         {
             foreach (var order in ordering)
             {

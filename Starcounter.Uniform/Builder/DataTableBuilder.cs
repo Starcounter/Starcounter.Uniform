@@ -115,11 +115,7 @@ namespace Starcounter.Uniform.Builder
                 throw new InvalidOperationException($"DataSource has not been configured. Call one of {nameof(WithDataSource)} overloads before calling {nameof(Build)}");
             }
 
-            var uniDataTableViewModel = new UniDataTable();
-            uniDataTableViewModel.Init(_dataProvider, _columns, _initialPageIndex, _initialPageSize);
-
-            // use _dataProvider, _columns, _initialPageIndex and _initialPageSize
-            return uniDataTableViewModel;
+            return new UniDataTable().Init(_dataProvider, _columns, _initialPageIndex, _initialPageSize);
         }
 
     }
