@@ -23,6 +23,8 @@ namespace Starcounter.Uniform.ViewModels
             PopulateColumns(sourceColumns);
             LoadRows();
 
+            this.TotalRows = dataProvider.TotalRows;
+
             return this;
         }
 
@@ -63,11 +65,6 @@ namespace Starcounter.Uniform.ViewModels
                 column.Data = sourceColumn;
                 column.DataProvider = this.FilteredDataProvider;
             }
-        }
-
-        private void PopulateRows(IReadOnlyCollection<Json> currentPageRows)
-        {
-
         }
 
         [UniDataTable_json.Pagination]
