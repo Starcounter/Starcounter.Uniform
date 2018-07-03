@@ -1,98 +1,54 @@
+using Starcounter.Uniform.Generic.FilterAndSort;
+using Starcounter.Uniform.Generic.Pagination;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using Starcounter.Uniform.Interfaces;
 
 namespace Starcounter.Uniform.ViewModels
 {
-    partial class UniDataTable : Json
+    public partial class UniDataTable : Json
     {
-        public int PageSize => DataTableProvider.PageSize;
-        public int Page => DataTableProvider.Page;
-        public int RowsCount => DataTableProvider.CountRows();
-        public IUniDataTableProvider DataTableProvider { get; protected set; }
+        public IFilteredDataSource<Json> FilteredDataSource { get; protected set; }
 
-        public void Init(IUniDataTableProvider dataTableProvider)
+        public void Init(IFilteredDataSource<Json> dataSource, Arr<ColumnnsElementJson> sourceColumns) // Will be changed to specific class for Column
         {
-            this.DataTableProvider = dataTableProvider;
+            //var ints = Enumerable.Empty<string>(); // OUT
+            //IEnumerable<object> list = ints;
+
+            //Action<object> action = o => { }; // IN
+            //Action<string> a = action;
+
+            this.FilteredDataSource = dataSource;
+            Pagination.DataSource = dataSource;
+            Pagination.ReloadRows = ReloadRows;
+            this.FilteredDataSource.PaginationConfiguration = new PaginationConfiguration(100);
+
+            this.Columnns = sourceColumns; // Populate columns
         }
 
-        void Handle(Input.Page action)
+        private void ReloadRows()
         {
-            var page = (int)action.Value;
-            this.DataTableProvider.Page = page;
-            while (this.RowsData.ElementAtOrDefault(page - 1) == null)
-            {
-                this.RowsData.Add();
-            }
-
-            var newRowsData = new UniDataTableRowsData {Rows = this.DataTableProvider.SelectRows()};
-            if (this.RowsData.ElementAtOrDefault(page) == null)
-            {
-                this.RowsData.Insert(page, newRowsData);
-            }
-            else
-            {
-                this.RowsData[page] = newRowsData;
-            }
+            this.Pages = FilteredDataSource.CurrentPageRows // Find proper page to put proper rows.
         }
 
-        [UniDataTable_json.RowsData]
-        partial class UniDataTableRowsData : Json
-        {
-            public IEnumerable<object> Rows { get; set; }
 
-            static UniDataTableRowsData()
+        [UniDataTable_json.Pagination]
+        public partial class PaginationViewModel : Json
+        {
+            //TODO: PagesCount? When change it? Which it should refer to?
+            public int PagesCount => (DataSource.TotalRows + DataSource.PaginationConfiguration.PageSize - 1) / DataSource.PaginationConfiguration.PageSize; // Rounded up
+            public IPaginatedDataSource<Json> DataSource { get; set; }
+            public Action ReloadRows { get; set; }
+
+            void Handle(Input.CurrentPageIndex action)
             {
-                //DefaultTemplate.Rows - Provide schema for Rows
+                DataSource.PaginationConfiguration.CurrentPageIndex = (int)action.Value;
+                ReloadRows?.Invoke();
+            }
+
+            void Handle(Input.PageSize action)
+            {
+                DataSource.PaginationConfiguration.PageSize = (int)action.Value;
+                ReloadRows?.Invoke();
             }
         }
-
-        /*
-        /// <summary>
-        /// Sorts and return given rows by specified column name and order
-        /// </summary>
-        /// <typeparam name="T">Type of row</typeparam>
-        /// <param name="rows">Collection of rows to sort</param>
-        /// <param name="columnToSortBy">Name of the column to sort by</param>
-        /// <param name="order">Di</param>
-        /// <returns></returns>
-        public static IEnumerable<T> SortRows<T>(IEnumerable<T> rows, string columnToSortBy, SortOrder order)
-        {
-            if (order == SortOrder.Ascending)
-            {
-                return rows.OrderBy(x =>
-                {
-                    var propertyInfo = x.GetType().GetProperty(columnToSortBy);
-                    return propertyInfo != null ? propertyInfo.GetValue(x) : x;
-                });
-            }
-            else
-            {
-                return rows.OrderByDescending(x =>
-                {
-                    var propertyInfo = x.GetType().GetProperty(columnToSortBy);
-                    return propertyInfo != null ? propertyInfo.GetValue(x) : x;
-                });
-            }
-        }
-
-        public static IEnumerable<T> FilterRows<T>(IEnumerable<T> rows, string columnToFilterBy, string filterString, bool lazyFiltering = false)
-        {
-            if (string.IsNullOrEmpty(filterString) || string.IsNullOrEmpty(columnToFilterBy) || rows.Any(x => x.GetType().GetProperty(columnToFilterBy)?.GetValue(x) == null))
-            {
-                return rows;
-            }
-
-            if (lazyFiltering)
-            {
-                return rows.Where(x => (string)x.GetType().GetProperty(columnToFilterBy)?.GetValue(x) == filterString);
-            }
-            else
-            {
-                return rows.Where(x => x.GetType().GetProperty(columnToFilterBy).GetValue(x).ToString().Contains(filterString));
-            }
-        }
-        */
     }
 }

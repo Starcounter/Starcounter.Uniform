@@ -1,10 +1,28 @@
 {
-  "RowsData": [
+  "Columnns": [
     {
-      "Rows": [ {} ]
+      "DisplayName": "",
+      "PropertyName": "",
+      "SortingEnabled": true,
+      "FilteringEnabled": true,
+      "Sort$": "",
+      "Filter$": ""
     }
   ],
-  "Page$": 0,
-  "PageSize": 0,
-  "RowsCount": 0
+
+  "Pagination": {
+    "CurrentPageIndex$": 0,
+    "PageSize$": 20,
+    "PagesCount": 0,
+    "NextPageTrigger$": 0,
+    "PreviousPageTrigger$": 0
+  },
+
+  "SelectedRows": [],
+  "Pages": [
+    {
+      "Rows": [ {} ] // dataTableBuilder VM
+    }
+  ],
+  "TotalRows": 0
 }
