@@ -26,16 +26,6 @@ namespace Starcounter.Uniform.ViewModels
             return this;
         }
 
-        private void PopulateColumns(IEnumerable<DataTableColumn> sourceColumns)
-        {
-            foreach (var sourceColumn in sourceColumns)
-            {
-                var column = this.Columnns.Add();
-                column.Data = sourceColumn;
-                column.DataProvider = this.FilteredDataProvider;
-            }
-        }
-
         private void LoadRows()
         {
             var page = this.FilteredDataProvider.PaginationConfiguration.CurrentPageIndex;
@@ -50,6 +40,11 @@ namespace Starcounter.Uniform.ViewModels
 
             var newRowsData = new PagesViewModel();
 
+            foreach (var currentPageRow in this.FilteredDataProvider.CurrentPageRows)
+            {
+                newRowsData.Rows.Add(currentPageRow); //May not work
+            }
+
             if (this.Pages.ElementAtOrDefault(page) == null)
             {
                 this.Pages.Insert(page, newRowsData);
@@ -58,6 +53,21 @@ namespace Starcounter.Uniform.ViewModels
             {
                 this.Pages[page] = newRowsData;
             }
+        }
+
+        private void PopulateColumns(IEnumerable<DataTableColumn> sourceColumns)
+        {
+            foreach (var sourceColumn in sourceColumns)
+            {
+                var column = this.Columnns.Add();
+                column.Data = sourceColumn;
+                column.DataProvider = this.FilteredDataProvider;
+            }
+        }
+
+        private void PopulateRows(IReadOnlyCollection<Json> currentPageRows)
+        {
+
         }
 
         [UniDataTable_json.Pagination]
