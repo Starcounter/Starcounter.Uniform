@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Starcounter.Uniform.Builder
 {
@@ -32,9 +33,24 @@ namespace Starcounter.Uniform.Builder
             Expression<Func<TViewModel, TColumn>> propertySelector,
             Action<ColumnBuilder> configure)
         {
-            // TODO
-            string propertyName = "get it from the propertySelector";
-            return AddColumn(propertyName, configure);
+            Type viewModelType = typeof(TViewModel);
+
+            if (!(propertySelector.Body is MemberExpression member))
+            {
+                throw new ArgumentException($"Expression '{propertySelector}' refers to a method, not a property.");
+            }
+
+            if (!(member.Member is PropertyInfo propertyInfo))
+            {
+                throw new ArgumentException($"Expression '{propertySelector}' refers to a field, not a property.");
+            }
+
+            if (viewModelType != propertyInfo.ReflectedType && !viewModelType.IsSubclassOf(propertyInfo.ReflectedType))
+            {
+                throw new ArgumentException($"Expression '{propertySelector}' refers to a property that is not from type {viewModelType}.");
+            }
+
+            return AddColumn(propertyInfo.Name, configure);
         }
 
         /// <summary>
