@@ -78,13 +78,8 @@ namespace Starcounter.Uniform.ViewModels
             void Handle(Input.PageSize action)
             {
                 DataProvider.PaginationConfiguration.PageSize = (int)action.Value;
-                LoadRows?.Invoke(); // Reset all rows data and load only current page with new size?
+                LoadRows?.Invoke(); // TODO: Reset all rows data and load only current page with new size?
             }
-        }
-
-        [UniDataTable_json.Pages]
-        public partial class PagesViewModel : Json
-        {
         }
 
         [UniDataTable_json.Columnns]
@@ -111,17 +106,6 @@ namespace Starcounter.Uniform.ViewModels
                 }
             }
 
-            private OrderDirection ParseOrderDirection(string orderString)
-            {
-                if (orderString == "asc")
-                {
-                    return OrderDirection.Ascending;
-                }
-
-                return OrderDirection.Descending;
-
-            }
-
             void Handle(Input.Sort action)
             {
                 var order =
@@ -135,7 +119,7 @@ namespace Starcounter.Uniform.ViewModels
                     }
                     else
                     {
-                        order = null;
+                        DataProvider.FilterOrderConfiguration.Ordering.Remove(order);
                     }
                 }
                 else
@@ -147,6 +131,16 @@ namespace Starcounter.Uniform.ViewModels
                     });
                 }
             }
+
+            private static OrderDirection ParseOrderDirection(string orderString)
+            {
+                return orderString == "asc" ? OrderDirection.Ascending : OrderDirection.Descending;
+            }
+        }
+
+        [UniDataTable_json.Pages]
+        public partial class PagesViewModel : Json
+        {
         }
     }
 }
