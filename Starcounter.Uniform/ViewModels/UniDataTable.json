@@ -3,8 +3,8 @@
     {
       "DisplayName": "",
       "PropertyName": "",
-      "SortingEnabled": true,
-      "FilteringEnabled": true,
+      "IsSortable": true,
+      "IsFilterable": true,
       "Sort$": "",
       "Filter$": ""
     }
@@ -13,9 +13,7 @@
   "Pagination": {
     "CurrentPageIndex$": 0,
     "PageSize$": 20,
-    "PagesCount": 0,
-    "NextPageTrigger$": 0,
-    "PreviousPageTrigger$": 0
+    "PagesCount": 0
   },
 
   "SelectedRows": [],

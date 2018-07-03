@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Starcounter.Linq;
+using Starcounter.Uniform.Generic.FilterAndSort;
+using Starcounter.Uniform.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Starcounter.Linq;
-using Starcounter.Uniform.Generic.FilterAndSort;
 
 namespace Starcounter.Uniform.Builder
 {
@@ -114,8 +115,11 @@ namespace Starcounter.Uniform.Builder
                 throw new InvalidOperationException($"DataSource has not been configured. Call one of {nameof(WithDataSource)} overloads before calling {nameof(Build)}");
             }
 
+            var uniDataTableViewModel = new UniDataTable();
+            uniDataTableViewModel.Init(_dataProvider, _columns, _initialPageIndex, _initialPageSize);
+
             // use _dataProvider, _columns, _initialPageIndex and _initialPageSize
-            return new Json();
+            return uniDataTableViewModel;
         }
 
     }
