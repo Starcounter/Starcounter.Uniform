@@ -6,21 +6,21 @@ using Starcounter.Uniform.Generic.Pagination;
 namespace Starcounter.Uniform.Queryables
 {
     /// <summary>
-    /// This is the typical implementation of <see cref="IPaginatedDataSource{TViewModel}"/> used when
-    /// the source data is a queryable.
+    /// This is the typical implementation of <see cref="IPaginatedDataProvider{TViewModel}"/> used when
+    /// the data source is a queryable.
     /// </summary>
     /// <typeparam name="TData"></typeparam>
     /// <typeparam name="TViewModel"></typeparam>
-    public class PaginatedQueryableDataSource<TData, TViewModel> : IPaginatedDataSource<TViewModel>
+    public class PaginatedQueryableDataProvider<TData, TViewModel> : IPaginatedDataProvider<TViewModel>
         where TViewModel : Json, new()
     {
         private readonly IQueryable<TData> _queryable;
-        private readonly Func<TData, TViewModel> _converter;
+        private readonly Converter<TData, TViewModel> _converter;
         private readonly IQueryablePaginator<TData, TViewModel> _paginator;
 
-        public PaginatedQueryableDataSource(
+        public PaginatedQueryableDataProvider(
             IQueryable<TData> queryable,
-            Func<TData, TViewModel> converter,
+            Converter<TData, TViewModel> converter,
             IQueryablePaginator<TData, TViewModel> paginator)
         {
             _queryable = queryable;

@@ -48,21 +48,23 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Builder\DataColumnBuilder.cs" />
+    <Compile Include="Builder\DataProviderBuilder.cs" />
     <Compile Include="Builder\DataTableBuilder.cs" />
+    <Compile Include="Builder\DataTableColumn.cs" />
     <Compile Include="Generic\FilterAndSort\Filter.cs" />
     <Compile Include="Interfaces\IUniDataTableProvider.cs" />
-    <Compile Include="Queryables\FilteredPaginatedDataSource.cs" />
+    <Compile Include="Queryables\FilteredPaginatedDataProvider.cs" />
     <Compile Include="Generic\FilterAndSort\FilterOrderConfiguration.cs" />
     <Compile Include="Generic\Pagination\PaginationConfiguration.cs" />
-    <Compile Include="Generic\Pagination\IPaginatedDataSource.cs" />
-    <Compile Include="Generic\FilterAndSort\IFilteredDataSource.cs" />
-    <Compile Include="Queryables\IQueryableFilterSorter.cs" />
+    <Compile Include="Generic\Pagination\IPaginatedDataProvider.cs" />
+    <Compile Include="Generic\FilterAndSort\IFilteredDataProvider.cs" />
+    <Compile Include="Queryables\IQueryableFilter.cs" />
     <Compile Include="Queryables\IQueryablePaginator.cs" />
     <Compile Include="Generic\FilterAndSort\Order.cs" />
     <Compile Include="Generic\FilterAndSort\OrderDirection.cs" />
-    <Compile Include="Queryables\PaginatedQueryableDataSource.cs" />
-    <Compile Include="Builder\PaginationBuilder.cs" />
-    <Compile Include="Queryables\QueryableFilterSorter.cs" />
+    <Compile Include="Queryables\PaginatedQueryableDataProvider.cs" />
+    <Compile Include="Queryables\QueryableFilter.cs" />
     <Compile Include="Queryables\QueryablePaginator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UniDataTableColumn.cs" />
