@@ -108,14 +108,14 @@ namespace Starcounter.Uniform.Builder
             return this;
         }
 
-        public Json Build()
+        public UniDataTable Build()
         {
             if (_dataProvider == null)
             {
                 throw new InvalidOperationException($"DataSource has not been configured. Call one of {nameof(WithDataSource)} overloads before calling {nameof(Build)}");
             }
 
-            return new UniDataTable().Init(_dataProvider, _columns, _initialPageIndex, _initialPageSize);
+            return new UniDataTable().Init(_dataProvider, _columns, _initialPageSize, _initialPageIndex);
         }
 
     }
