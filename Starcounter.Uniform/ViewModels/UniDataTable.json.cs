@@ -19,6 +19,7 @@ namespace Starcounter.Uniform.ViewModels
             Pagination.LoadRows = LoadRows;
 
             this.FilteredDataProvider.PaginationConfiguration = new PaginationConfiguration(initialPageSize, initialPageIndex);
+            this.FilteredDataProvider.FilterOrderConfiguration = new FilterOrderConfiguration();
 
             PopulateColumns(sourceColumns);
             LoadRows();
@@ -64,6 +65,7 @@ namespace Starcounter.Uniform.ViewModels
                 var column = this.Columnns.Add();
                 column.Data = sourceColumn;
                 column.DataProvider = this.FilteredDataProvider;
+                column.LoadRows = LoadRows;
             }
         }
 
@@ -73,8 +75,9 @@ namespace Starcounter.Uniform.ViewModels
             public IFilteredDataProvider<Json> DataProvider { get; set; }
             public Action LoadRows { get; set; }
 
-            public int PagesCount => (DataProvider.TotalRows + DataProvider.PaginationConfiguration.PageSize - 1) / DataProvider.PaginationConfiguration.PageSize;
             public int PageSize => DataProvider.PaginationConfiguration.PageSize;
+
+            public int PagesCount => (DataProvider.TotalRows + DataProvider.PaginationConfiguration.PageSize - 1) / DataProvider.PaginationConfiguration.PageSize;
 
             void Handle(Input.CurrentPageIndex action)
             {
@@ -93,6 +96,8 @@ namespace Starcounter.Uniform.ViewModels
         public partial class ColumnsViewModel : Json, IBound<DataTableColumn>
         {
             public IFilteredDataProvider<Json> DataProvider { get; set; }
+            public Action LoadRows { get; set; }
+
 
             void Handle(Input.Filter action)
             {
@@ -111,6 +116,8 @@ namespace Starcounter.Uniform.ViewModels
                         Value = action.Value
                     });
                 }
+
+                LoadRows?.Invoke();
             }
 
             void Handle(Input.Sort action)
@@ -137,6 +144,8 @@ namespace Starcounter.Uniform.ViewModels
                         Direction = ParseOrderDirection(action.Value)
                     });
                 }
+
+                LoadRows?.Invoke();
             }
 
             private static OrderDirection ParseOrderDirection(string orderString)
