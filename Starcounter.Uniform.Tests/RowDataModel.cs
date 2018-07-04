@@ -1,6 +1,6 @@
 ﻿namespace Starcounter.Uniform.Tests
 {
-    public class RowViewModel : Json
+    public class RowDataModel
     {
         public int Number { get; set; }
         public string Name { get; set; }

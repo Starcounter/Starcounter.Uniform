@@ -45,7 +45,7 @@ namespace Starcounter.Uniform.ViewModels
 
             foreach (var currentPageRow in this.FilteredDataProvider.CurrentPageRows)
             {
-                newRowsData.Rows.Add(currentPageRow); //May not work
+                newRowsData.Rows.Add(currentPageRow);
             }
 
             if (this.Pages.ElementAtOrDefault(page) == null)
@@ -79,13 +79,13 @@ namespace Starcounter.Uniform.ViewModels
 
             public int PagesCount => (DataProvider.TotalRows + DataProvider.PaginationConfiguration.PageSize - 1) / DataProvider.PaginationConfiguration.PageSize;
 
-            void Handle(Input.CurrentPageIndex action)
+            public void Handle(Input.CurrentPageIndex action)
             {
                 DataProvider.PaginationConfiguration.CurrentPageIndex = (int)action.Value;
                 LoadRows?.Invoke();
             }
 
-            void Handle(Input.PageSize action)
+            public void Handle(Input.PageSize action)
             {
                 DataProvider.PaginationConfiguration.PageSize = (int)action.Value;
                 LoadRows?.Invoke(); // TODO: Reset all rows data and load only current page with new size?
@@ -99,7 +99,7 @@ namespace Starcounter.Uniform.ViewModels
             public Action LoadRows { get; set; }
 
 
-            void Handle(Input.Filter action)
+            public void Handle(Input.Filter action)
             {
                 var filter =
                     DataProvider.FilterOrderConfiguration.Filters.FirstOrDefault(x =>
@@ -120,7 +120,7 @@ namespace Starcounter.Uniform.ViewModels
                 LoadRows?.Invoke();
             }
 
-            void Handle(Input.Sort action)
+            public void Handle(Input.Sort action)
             {
                 var order =
                     DataProvider.FilterOrderConfiguration.Ordering.FirstOrDefault(x =>

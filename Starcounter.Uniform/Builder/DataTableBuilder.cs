@@ -1,5 +1,4 @@
-﻿using Starcounter.Linq;
-using Starcounter.Uniform.Generic.FilterAndSort;
+﻿using Starcounter.Uniform.Generic.FilterAndSort;
 using Starcounter.Uniform.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -45,7 +44,7 @@ namespace Starcounter.Uniform.Builder
         /// <param name="queryable">The original data to expose</param>
         /// <returns>The original builder object</returns>
         /// <remarks>This method changes and returns the original builder object</remarks>
-        public DataTableBuilder<TViewModel> WithDataSource<TData>(Queryable<TData> queryable)
+        public DataTableBuilder<TViewModel> WithDataSource<TData>(IQueryable<TData> queryable)
         {
             return WithDataSource(queryable, builder => { });
         }
