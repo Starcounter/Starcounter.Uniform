@@ -18,6 +18,7 @@ namespace Starcounter.Uniform.Tests.Builder
         private int _initialPageSize;
         private int _initialPageIndex;
         private Func<IReadOnlyCollection<Json>> _returnedRowsFunc;
+        private string _columnPropertyName = "FirstName";
 
         [SetUp]
         public void SetUp()
@@ -86,38 +87,69 @@ namespace Starcounter.Uniform.Tests.Builder
         }
 
         [Test]
-        public void AfterCallingFilterHandleFilerValueInFilterOrderConfigurationShouldChange()
+        public void AfterCallingFilterHandleFilterValueInFilterOrderConfigurationShouldChange()
         {
-            var propertyName = "Name";
             var expectedFilterValue = "John";
-            _dataTableColumns.Add(new DataTableColumn { PropertyName = propertyName });
-            var filter = new Filter { PropertyName = propertyName, Value = "Ann" };
+            _dataTableColumns.Add(new DataTableColumn { PropertyName = _columnPropertyName });
+            var filter = new Filter { PropertyName = _columnPropertyName, Value = "Ann" };
 
             InitSut();
             _dataProviderMock.Object.FilterOrderConfiguration.Filters.Add(filter);
-            var firstNameColumn = _sut.Columnns.First(x => x.PropertyName == propertyName);
+            var firstNameColumn = _sut.Columnns.First(x => x.PropertyName == _columnPropertyName);
             firstNameColumn.Handle(new UniDataTable.ColumnsViewModel.Input.Filter { Value = expectedFilterValue });
 
-            _dataProviderMock.Object.FilterOrderConfiguration.Filters.Should().ContainSingle().Which.Value.Should()
+            _dataProviderMock.Object.FilterOrderConfiguration.Filters.Should().ContainSingle(x => x.PropertyName == _columnPropertyName).Which.Value.Should()
                 .Be(expectedFilterValue);
         }
 
         [Test]
-        public void AfterCallingFilterHandleForNotExistingFilterNewFilterShouldBeAddedToFilterOrderConfiguration()
+        public void AfterCallingFilterHandleForNotExistingFilterNewFilterShouldBeAdded()
         {
-            var columnName = "Test";
-            var propertyName = "Name";
+            var filterPropertyName = "Name";
             var filterValue = "Ann";
-            _dataTableColumns.Add(new DataTableColumn { PropertyName = columnName });
-            var filter = new Filter { PropertyName = propertyName, Value = filterValue };
+            _dataTableColumns.Add(new DataTableColumn { PropertyName = _columnPropertyName });
+            var filter = new Filter { PropertyName = filterPropertyName, Value = filterValue };
 
             InitSut();
             _dataProviderMock.Object.FilterOrderConfiguration.Filters.Add(filter);
-            var firstNameColumn = _sut.Columnns.First(x => x.PropertyName == columnName);
+            var firstNameColumn = _sut.Columnns.First(x => x.PropertyName == _columnPropertyName);
             firstNameColumn.Handle(new UniDataTable.ColumnsViewModel.Input.Filter { Value = "John" });
 
-            _dataProviderMock.Object.FilterOrderConfiguration.Filters.Should().ContainSingle(x => x.PropertyName == propertyName).Which.Value.Should()
+            _dataProviderMock.Object.FilterOrderConfiguration.Filters.Should().ContainSingle(x => x.PropertyName == filterPropertyName).Which.Value.Should()
                 .Be(filterValue);
+        }
+
+        [Test]
+        public void AfterCallingSortHandlerOrderValueInFilterOrderConfigurationShouldChange()
+        {
+            var expectedSortDirection = "desc";
+            _dataTableColumns.Add(new DataTableColumn { PropertyName = _columnPropertyName });
+            var order = new Order { PropertyName = _columnPropertyName, Direction = OrderDirection.Ascending };
+
+            InitSut();
+            _dataProviderMock.Object.FilterOrderConfiguration.Ordering.Add(order);
+            var firstNameColumn = _sut.Columnns.First(x => x.PropertyName == _columnPropertyName);
+            firstNameColumn.Handle(new UniDataTable.ColumnsViewModel.Input.Sort { Value = expectedSortDirection });
+
+            _dataProviderMock.Object.FilterOrderConfiguration.Ordering.Should().ContainSingle(x => x.PropertyName == _columnPropertyName).Which.Direction.Should()
+                .Be(OrderDirection.Descending);
+        }
+
+        [Test]
+        public void AfterCallingSortHandlerOrderForNotExistingOrderNewOrderShouldBeAdded()
+        {
+            var filterPropertyName = "Name";
+            var expectedSortDirection = "desc";
+            _dataTableColumns.Add(new DataTableColumn { PropertyName = _columnPropertyName });
+            var order = new Order { PropertyName = filterPropertyName, Direction = OrderDirection.Ascending };
+
+            InitSut();
+            _dataProviderMock.Object.FilterOrderConfiguration.Ordering.Add(order);
+            var firstNameColumn = _sut.Columnns.First(x => x.PropertyName == _columnPropertyName);
+            firstNameColumn.Handle(new UniDataTable.ColumnsViewModel.Input.Sort { Value = expectedSortDirection });
+
+            _dataProviderMock.Object.FilterOrderConfiguration.Ordering.Should().ContainSingle(x => x.PropertyName == filterPropertyName).Which.Direction.Should()
+                .Be(OrderDirection.Ascending);
         }
     }
 }
