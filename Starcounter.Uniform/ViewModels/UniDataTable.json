@@ -9,13 +9,11 @@
       "Filter$": ""
     }
   ],
-
   "Pagination": {
     "CurrentPageIndex$": 0,
     "PageSize$": 20,
     "PagesCount": 0
   },
-
   "SelectedRows": [],
   "Pages": [
     {
