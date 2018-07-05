@@ -57,8 +57,10 @@ namespace Starcounter.Uniform.Queryables
 
             var parameterExpression = Expression.Parameter(typeof(TData), "x");
             var propertyExpression = Expression.Property(parameterExpression, propertyInfo);
-            var comparisonExpression = Expression.Equal(Expression.Constant(filter.Value), propertyExpression);
-            var lambda = Expression.Lambda<Func<TData, bool>>(comparisonExpression, parameterExpression);
+            var containsMethod = typeof(string).GetMethod("Contains", new[] { typeof(string) }) ?? throw new InvalidOperationException();
+            var containsMethodExp = Expression.Call(propertyExpression, containsMethod, Expression.Constant(filter.Value));
+
+            var lambda = Expression.Lambda<Func<TData, bool>>(containsMethodExp, parameterExpression);
 
             return data.Where(lambda);
         }
@@ -81,7 +83,7 @@ namespace Starcounter.Uniform.Queryables
 
             var parameterExpression = Expression.Parameter(typeof(TData), "x");
             var propertyExpression = Expression.Property(parameterExpression, propertyInfo);
-            var lambda = Expression.Lambda<Func<TData, bool>>(propertyExpression, parameterExpression);
+            var lambda = Expression.Lambda<Func<TData, string>>(propertyExpression, parameterExpression);
 
             if (order.Direction == OrderDirection.Ascending)
             {

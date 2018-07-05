@@ -18,13 +18,11 @@ namespace Starcounter.Uniform.ViewModels
             Pagination.DataProvider = dataProvider;
             Pagination.LoadRows = LoadRows;
 
-            this.FilteredDataProvider.PaginationConfiguration = new PaginationConfiguration(initialPageSize, initialPageIndex);
+            this.FilteredDataProvider.PaginationConfiguration = new PaginationConfiguration(100, initialPageIndex);
             this.FilteredDataProvider.FilterOrderConfiguration = new FilterOrderConfiguration();
 
             PopulateColumns(sourceColumns);
             LoadRows();
-
-            this.TotalRows = dataProvider.TotalRows;
 
             return this;
         }
@@ -56,13 +54,15 @@ namespace Starcounter.Uniform.ViewModels
             {
                 this.Pages[page] = newRowsData;
             }
+
+            this.TotalRows = this.FilteredDataProvider.TotalRows;
         }
 
         private void PopulateColumns(IEnumerable<DataTableColumn> sourceColumns)
         {
             foreach (var sourceColumn in sourceColumns)
             {
-                var column = this.Columnns.Add();
+                var column = this.Columns.Add();
                 column.Data = sourceColumn;
                 column.DataProvider = this.FilteredDataProvider;
                 column.LoadRows = LoadRows;
@@ -92,12 +92,11 @@ namespace Starcounter.Uniform.ViewModels
             }
         }
 
-        [UniDataTable_json.Columnns]
+        [UniDataTable_json.Columns]
         public partial class ColumnsViewModel : Json, IBound<DataTableColumn>
         {
             public IFilteredDataProvider<Json> DataProvider { get; set; }
             public Action LoadRows { get; set; }
-
 
             public void Handle(Input.Filter action)
             {
