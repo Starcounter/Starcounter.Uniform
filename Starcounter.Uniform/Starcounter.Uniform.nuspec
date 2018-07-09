@@ -4,14 +4,14 @@
     <id>$id$</id>
     <version>$version$</version>
     <title>$title$</title>
-    <authors>Patryk Szwermer, Marcin Golinski</authors>
+    <authors>Starcounter, Patryk Szwermer, Marcin Golinski</authors>
     <owners>$author$</owners>
     <licenseUrl>https://github.com/Starcounter/Starcounter.Uniform/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/Starcounter/Starcounter.Uniform</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Helper library for server-side part of uniform components.</description>
-    <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
+    <releaseNotes>Initial release.</releaseNotes>
     <copyright>Copyright 2018</copyright>
-    <tags>Starcounter Uniform</tags>
+    <tags>Starcounter, Uniform</tags>
   </metadata>
 </package>
