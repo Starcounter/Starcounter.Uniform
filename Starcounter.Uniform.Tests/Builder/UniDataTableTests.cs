@@ -87,15 +87,47 @@ namespace Starcounter.Uniform.Tests.Builder
         }
 
         [Test]
-        public void AfterCallingFilterHandleFilterValueInFilterOrderConfigurationShouldChange()
+        public void AfterCallingCurrentPageIndexHandleWitTooBigPageIndexLastPageIndexShouldBeSetInstead()
+        {
+            var totalRows = 500;
+            var wrongIndex = 100;
+            var expectedLastPageIndex = 25;
+            _dataProviderMock
+                .Setup(provider => provider.TotalRows)
+                .Returns(() => totalRows);
+            InitSut();
+
+            _sut.Pagination.Handle(new UniDataTable.PaginationViewModel.Input.CurrentPageIndex { Value = wrongIndex });
+
+            _dataProviderMock.Object.PaginationConfiguration.CurrentPageIndex.Should().Be(expectedLastPageIndex);
+        }
+
+        [Test]
+        public void AfterCallingCurrentPageIndexHandleWitPageIndexLowerThanZeroZeroShouldBeSetInstead()
+        {
+            var totalRows = 500;
+            var wrongIndex = -1;
+            var expectedIndex = 0;
+            _dataProviderMock
+                .Setup(provider => provider.TotalRows)
+                .Returns(() => totalRows);
+            InitSut();
+
+            _sut.Pagination.Handle(new UniDataTable.PaginationViewModel.Input.CurrentPageIndex { Value = wrongIndex });
+
+            _dataProviderMock.Object.PaginationConfiguration.CurrentPageIndex.Should().Be(expectedIndex);
+        }
+
+        [Test]
+        public void AfterCallingFilterHandleForAlreadyExistingFilterFilterValueShouldChange()
         {
             var expectedFilterValue = "John";
             _dataTableColumns.Add(new DataTableColumn { PropertyName = _columnPropertyName });
             var filter = new Filter { PropertyName = _columnPropertyName, Value = "Ann" };
-
             InitSut();
             _dataProviderMock.Object.FilterOrderConfiguration.Filters.Add(filter);
             var firstNameColumn = _sut.Columns.First(x => x.PropertyName == _columnPropertyName);
+
             firstNameColumn.Handle(new UniDataTable.ColumnsViewModel.Input.Filter { Value = expectedFilterValue });
 
             _dataProviderMock.Object.FilterOrderConfiguration.Filters.Should().ContainSingle(x => x.PropertyName == _columnPropertyName).Which.Value.Should()
@@ -109,26 +141,27 @@ namespace Starcounter.Uniform.Tests.Builder
             var filterValue = "Ann";
             _dataTableColumns.Add(new DataTableColumn { PropertyName = _columnPropertyName });
             var filter = new Filter { PropertyName = filterPropertyName, Value = filterValue };
-
             InitSut();
             _dataProviderMock.Object.FilterOrderConfiguration.Filters.Add(filter);
             var firstNameColumn = _sut.Columns.First(x => x.PropertyName == _columnPropertyName);
+
             firstNameColumn.Handle(new UniDataTable.ColumnsViewModel.Input.Filter { Value = "John" });
 
+            _dataProviderMock.Object.FilterOrderConfiguration.Filters.Should().HaveCount(2);
             _dataProviderMock.Object.FilterOrderConfiguration.Filters.Should().ContainSingle(x => x.PropertyName == filterPropertyName).Which.Value.Should()
                 .Be(filterValue);
         }
 
         [Test]
-        public void AfterCallingSortHandlerOrderValueInFilterOrderConfigurationShouldChange()
+        public void AfterCallingSortHandlerForAlreadyExistingOrderOrderValueShouldChange()
         {
             var expectedSortDirection = "desc";
             _dataTableColumns.Add(new DataTableColumn { PropertyName = _columnPropertyName });
             var order = new Order { PropertyName = _columnPropertyName, Direction = OrderDirection.Ascending };
-
             InitSut();
             _dataProviderMock.Object.FilterOrderConfiguration.Ordering.Add(order);
             var firstNameColumn = _sut.Columns.First(x => x.PropertyName == _columnPropertyName);
+
             firstNameColumn.Handle(new UniDataTable.ColumnsViewModel.Input.Sort { Value = expectedSortDirection });
 
             _dataProviderMock.Object.FilterOrderConfiguration.Ordering.Should().ContainSingle(x => x.PropertyName == _columnPropertyName).Which.Direction.Should()
@@ -142,10 +175,10 @@ namespace Starcounter.Uniform.Tests.Builder
             var expectedSortDirection = "desc";
             _dataTableColumns.Add(new DataTableColumn { PropertyName = _columnPropertyName });
             var order = new Order { PropertyName = filterPropertyName, Direction = OrderDirection.Ascending };
-
             InitSut();
             _dataProviderMock.Object.FilterOrderConfiguration.Ordering.Add(order);
             var firstNameColumn = _sut.Columns.First(x => x.PropertyName == _columnPropertyName);
+
             firstNameColumn.Handle(new UniDataTable.ColumnsViewModel.Input.Sort { Value = expectedSortDirection });
 
             _dataProviderMock.Object.FilterOrderConfiguration.Ordering.Should().ContainSingle(x => x.PropertyName == filterPropertyName).Which.Direction.Should()

@@ -74,7 +74,16 @@ namespace Starcounter.Uniform.ViewModels
 
             public void Handle(Input.CurrentPageIndex action)
             {
-                DataProvider.PaginationConfiguration.CurrentPageIndex = (int)action.Value;
+                var newPageIndex = (int)action.Value;
+                if (newPageIndex < 0)
+                {
+                    DataProvider.PaginationConfiguration.CurrentPageIndex = 0;
+                }
+                else
+                {
+                    DataProvider.PaginationConfiguration.CurrentPageIndex = newPageIndex > PagesCount ? PagesCount : newPageIndex;
+                }
+
                 LoadRows?.Invoke();
             }
 
