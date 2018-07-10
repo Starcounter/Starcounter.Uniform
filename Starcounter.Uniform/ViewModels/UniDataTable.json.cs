@@ -123,6 +123,11 @@ namespace Starcounter.Uniform.ViewModels
 
             public void Handle(Input.Sort action)
             {
+                if (action.Value != "asc" && action.Value != "desc" && !string.IsNullOrEmpty(action.Value))
+                {
+                    return; // TODO: For some reason this if is not working
+                }
+
                 var order =
                     DataProvider.FilterOrderConfiguration.Ordering.FirstOrDefault(x =>
                         x.PropertyName == this.PropertyName);

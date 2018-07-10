@@ -18,7 +18,7 @@ namespace Starcounter.Uniform.Tests.Builder
         private int _initialPageSize;
         private int _initialPageIndex;
         private Func<IReadOnlyCollection<Json>> _returnedRowsFunc;
-        private string _columnPropertyName = "FirstName";
+        private string _columnPropertyName = "Name";
 
         [SetUp]
         public void SetUp()
@@ -132,7 +132,7 @@ namespace Starcounter.Uniform.Tests.Builder
         [Test]
         public void AfterCallingFilterHandleForNotExistingFilterNewFilterShouldBeAdded()
         {
-            var filterPropertyName = "Name";
+            var filterPropertyName = "FirstName";
             var filterValue = "Ann";
             _dataTableColumns.Add(new DataTableColumn { PropertyName = _columnPropertyName });
             var filter = new Filter { PropertyName = filterPropertyName, Value = filterValue };
@@ -166,7 +166,7 @@ namespace Starcounter.Uniform.Tests.Builder
         [Test]
         public void AfterCallingSortHandlerOrderForNotExistingOrderNewOrderShouldBeAdded()
         {
-            var filterPropertyName = "Name";
+            var filterPropertyName = "FirstName";
             var expectedSortDirection = "desc";
             _dataTableColumns.Add(new DataTableColumn { PropertyName = _columnPropertyName });
             var order = new Order { PropertyName = filterPropertyName, Direction = OrderDirection.Ascending };
@@ -178,6 +178,23 @@ namespace Starcounter.Uniform.Tests.Builder
 
             _dataProviderMock.Object.FilterOrderConfiguration.Ordering.Should().ContainSingle(x => x.PropertyName == filterPropertyName).Which.Direction.Should()
                 .Be(OrderDirection.Ascending);
+        }
+
+        [Test]
+        public void AfterCallingSortHandlerWithInvalidSortValue()
+        {
+            _dataTableColumns.Add(new DataTableColumn { PropertyName = _columnPropertyName });
+            InitSut();
+            var firstNameColumn = _sut.Columns.First(x => x.PropertyName == _columnPropertyName);
+            _returnedRowsFunc = () => new List<RowViewModel>
+            {
+                new RowViewModel {Name = "Clark"},
+                new RowViewModel {Name = "Ann"}
+            };
+
+            firstNameColumn.Handle(new UniDataTable.ColumnsViewModel.Input.Sort { Value = "Test" });
+
+            _dataProviderMock.Object.FilterOrderConfiguration.Ordering.Should().BeEmpty();
         }
     }
 }
