@@ -13,11 +13,11 @@ namespace Starcounter.Uniform.Builder
     public class DataTableBuilder<TViewModel>
         where TViewModel : Json, new()
     {
-        public const int DefaultPageSize = 20;
+        public const int DefaultPageSize = 50;
 
         private IFilteredDataProvider<TViewModel> _dataProvider;
         private IReadOnlyCollection<DataTableColumn> _columns = new DataTableColumn[0];
-        private int _initialPageIndex = 0;
+        private int _initialPageIndex;
         private int _initialPageSize = DefaultPageSize;
 
         /// <summary>

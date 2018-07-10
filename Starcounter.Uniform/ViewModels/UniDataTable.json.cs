@@ -9,17 +9,17 @@ namespace Starcounter.Uniform.ViewModels
 {
     public partial class UniDataTable : Json
     {
-        public IFilteredDataProvider<Json> FilteredDataProvider { get; set; }
+        public IFilteredDataProvider<Json> DataProvider { get; set; }
 
         public UniDataTable Init(IFilteredDataProvider<Json> dataProvider, IEnumerable<DataTableColumn> sourceColumns, int initialPageSize, int initialPageIndex)
         {
-            this.FilteredDataProvider = dataProvider;
+            this.DataProvider = dataProvider;
 
             Pagination.DataProvider = dataProvider;
             Pagination.LoadRows = LoadRows;
 
-            this.FilteredDataProvider.PaginationConfiguration = new PaginationConfiguration(100, initialPageIndex);
-            this.FilteredDataProvider.FilterOrderConfiguration = new FilterOrderConfiguration();
+            this.DataProvider.PaginationConfiguration = new PaginationConfiguration(initialPageSize, initialPageIndex);
+            this.DataProvider.FilterOrderConfiguration = new FilterOrderConfiguration();
 
             PopulateColumns(sourceColumns);
             LoadRows();
@@ -29,7 +29,7 @@ namespace Starcounter.Uniform.ViewModels
 
         private void LoadRows()
         {
-            var page = this.FilteredDataProvider.PaginationConfiguration.CurrentPageIndex;
+            var page = this.DataProvider.PaginationConfiguration.CurrentPageIndex;
             if (page > 0)
             {
                 // Add missing dummy pages to maintain sparse page indicies in Pages
@@ -41,21 +41,14 @@ namespace Starcounter.Uniform.ViewModels
 
             var newRowsData = new PagesViewModel();
 
-            foreach (var currentPageRow in this.FilteredDataProvider.CurrentPageRows)
+            foreach (var currentPageRow in this.DataProvider.CurrentPageRows)
             {
                 newRowsData.Rows.Add(currentPageRow);
             }
 
-            if (this.Pages.ElementAtOrDefault(page) == null)
-            {
-                this.Pages.Insert(page, newRowsData);
-            }
-            else
-            {
-                this.Pages[page] = newRowsData;
-            }
+            this.Pages.Insert(page, newRowsData);
 
-            this.TotalRows = this.FilteredDataProvider.TotalRows;
+            this.TotalRows = this.DataProvider.TotalRows;
         }
 
         private void PopulateColumns(IEnumerable<DataTableColumn> sourceColumns)
@@ -64,7 +57,7 @@ namespace Starcounter.Uniform.ViewModels
             {
                 var column = this.Columns.Add();
                 column.Data = sourceColumn;
-                column.DataProvider = this.FilteredDataProvider;
+                column.DataProvider = this.DataProvider;
                 column.LoadRows = LoadRows;
             }
         }
