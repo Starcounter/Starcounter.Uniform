@@ -27,6 +27,9 @@ namespace Starcounter.Uniform.Tests.Builder
             _dataProviderMock.SetupAllProperties();
             _returnedRowsFunc = () => new List<Json>();
             _dataProviderMock.Setup(provider => provider.CurrentPageRows).Returns(() => _returnedRowsFunc());
+            _dataProviderMock
+                .Setup(provider => provider.TotalRows)
+                .Returns(() => 500);
             _dataTableColumns = new List<DataTableColumn>();
             _initialPageSize = 20;
             _initialPageIndex = 0;
@@ -75,26 +78,22 @@ namespace Starcounter.Uniform.Tests.Builder
         }
 
         [Test]
-        public void AfterChangingCurrentPageIndexPaginationConfigurationShouldChange()
+        public void AfterChangingCurrentPageIndexNewPagesAndRowsShouldBeExposed()
         {
             var newPageIndex = 2;
-
             InitSut();
+
             _sut.Pagination.Handle(new UniDataTable.PaginationViewModel.Input.CurrentPageIndex { Value = newPageIndex });
 
             _dataProviderMock.Object.PaginationConfiguration.CurrentPageIndex.Should().Be(newPageIndex);
-            _dataProviderMock.VerifyGet(x => x.CurrentPageRows, Times.Exactly(2));
+            _sut.Pages.Should().HaveCount(3);
         }
 
         [Test]
         public void AfterCallingCurrentPageIndexHandleWitTooBigPageIndexLastPageIndexShouldBeSetInstead()
         {
-            var totalRows = 500;
             var wrongIndex = 100;
             var expectedLastPageIndex = 25;
-            _dataProviderMock
-                .Setup(provider => provider.TotalRows)
-                .Returns(() => totalRows);
             InitSut();
 
             _sut.Pagination.Handle(new UniDataTable.PaginationViewModel.Input.CurrentPageIndex { Value = wrongIndex });
@@ -105,12 +104,8 @@ namespace Starcounter.Uniform.Tests.Builder
         [Test]
         public void AfterCallingCurrentPageIndexHandleWitPageIndexLowerThanZeroZeroShouldBeSetInstead()
         {
-            var totalRows = 500;
             var wrongIndex = -1;
             var expectedIndex = 0;
-            _dataProviderMock
-                .Setup(provider => provider.TotalRows)
-                .Returns(() => totalRows);
             InitSut();
 
             _sut.Pagination.Handle(new UniDataTable.PaginationViewModel.Input.CurrentPageIndex { Value = wrongIndex });
