@@ -54,5 +54,113 @@ namespace Starcounter.Uniform.Tests.Queryables
             returnedData.Should().HaveCount(2);
             returnedData.Should().NotContain(x => x.Name == "Tom");
         }
+
+        [Test]
+        public void ApplyingMultipleFiltersShouldReturnProperRowsDatas()
+        {
+            var data = new List<RowDataModel>
+            {
+                new RowDataModel {Name = "Ann", Number = 0},
+                new RowDataModel {Name = "Amanda", Number = 1},
+                new RowDataModel {Name = "Tom", Number = 2},
+                new RowDataModel {Name = "Clark", Number = 3},
+            }.AsQueryable();
+            var aFilter = new Filter { PropertyName = "Name", Value = "A" };
+            var annFilter = new Filter { PropertyName = "Name", Value = "Ann" };
+            var filterOrderConfiguration = new FilterOrderConfiguration();
+            filterOrderConfiguration.Filters.Add(aFilter);
+            filterOrderConfiguration.Filters.Add(annFilter);
+
+            var returnedData = _sut.Apply(data, filterOrderConfiguration);
+
+            returnedData.Should().ContainSingle().Which.Name.Should().Be("Ann");
+        }
+
+        [Test]
+        public void ApplyingOrderingShouldReturnProperRowsDatasOrdered()
+        {
+            var data = new List<RowDataModel>
+            {
+                new RowDataModel {Name = "Tom", Number = 2},
+                new RowDataModel {Name = "Ann", Number = 0},
+                new RowDataModel {Name = "Clark", Number = 2},
+                new RowDataModel {Name = "Amanda", Number = 1}
+            }.AsQueryable();
+
+            var expectedOrderedData = new List<RowDataModel>
+            {
+                new RowDataModel {Name = "Amanda", Number = 1},
+                new RowDataModel {Name = "Ann", Number = 0},
+                new RowDataModel {Name = "Clark", Number = 2},
+                new RowDataModel {Name = "Tom", Number = 3}
+            }.AsQueryable();
+
+            var order = new Order { PropertyName = "Name", Direction = OrderDirection.Ascending};
+            var filterOrderConfiguration = new FilterOrderConfiguration();
+            filterOrderConfiguration.Ordering.Add(order);
+
+            var returnedData = _sut.Apply(data, filterOrderConfiguration);
+
+            returnedData.Should().BeEquivalentTo(expectedOrderedData, options => options.WithStrictOrdering());
+        }
+
+        [Test]
+        public void ApplyingMultipleOrderingShouldReturnProperRowsDatasOrdered()
+        {
+            var data = new List<RowDataModel>
+            {
+                new RowDataModel {Name = "Tom", Number = 0},
+                new RowDataModel {Name = "Amanda", Number = 2},
+                new RowDataModel {Name = "Clark", Number = 1},
+                new RowDataModel {Name = "Ann", Number = 3}
+            }.AsQueryable();
+
+            var expectedOrderedData = new List<RowDataModel>
+            {
+                new RowDataModel {Name = "Tom", Number = 0},
+                new RowDataModel {Name = "Clark", Number = 1},
+                new RowDataModel {Name = "Amanda", Number = 2},
+                new RowDataModel {Name = "Ann", Number = 3}
+            }.AsQueryable();
+
+            var nameOrder = new Order { PropertyName = "Name", Direction = OrderDirection.Ascending };
+            var numberOrder = new Order { PropertyName = "Number", Direction = OrderDirection.Ascending };
+            var filterOrderConfiguration = new FilterOrderConfiguration();
+            filterOrderConfiguration.Ordering.Add(nameOrder);
+            filterOrderConfiguration.Ordering.Add(numberOrder);
+
+            var returnedData = _sut.Apply(data, filterOrderConfiguration);
+
+            returnedData.Should().BeEquivalentTo(expectedOrderedData, options => options.WithStrictOrdering());
+        }
+
+        [Test]
+        public void ApplyingMixOfFilterAndOrderShouldReturnProperRowsDatasFilteredAndOrdered()
+        {
+            var data = new List<RowDataModel>
+            {
+                new RowDataModel {Name = "Abi", Number = 1},
+                new RowDataModel {Name = "Clark", Number = 2},
+                new RowDataModel {Name = "Ann", Number = 0},
+                new RowDataModel {Name = "Amanda", Number = 3}
+            }.AsQueryable();
+
+            var expectedOrderedData = new List<RowDataModel>
+            {
+                new RowDataModel {Name = "Abi", Number = 1},
+                new RowDataModel {Name = "Amanda", Number = 3},
+                new RowDataModel {Name = "Ann", Number = 0}
+            }.AsQueryable();
+
+            var nameFilter = new Filter { PropertyName = "Name", Value = "A"};
+            var nameOrder = new Order { PropertyName = "Name", Direction = OrderDirection.Ascending };
+            var filterOrderConfiguration = new FilterOrderConfiguration();
+            filterOrderConfiguration.Filters.Add(nameFilter);
+            filterOrderConfiguration.Ordering.Add(nameOrder);
+
+            var returnedData = _sut.Apply(data, filterOrderConfiguration);
+
+            returnedData.Should().BeEquivalentTo(expectedOrderedData, options => options.WithStrictOrdering());
+        }
     }
 }
