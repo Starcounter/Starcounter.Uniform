@@ -83,16 +83,33 @@ namespace Starcounter.Uniform.Queryables
 
             var parameterExpression = Expression.Parameter(typeof(TData), "x");
             var propertyExpression = Expression.Property(parameterExpression, propertyInfo);
-            var lambda = Expression.Lambda<Func<TData, string>>(propertyExpression, parameterExpression);
+            // underlying type is Expression.Lambda<Func<TData, {propertyInfo.PropertyType}>>
+            var lambda = Expression.Lambda(propertyExpression, parameterExpression);
 
-            if (order.Direction == OrderDirection.Ascending)
-            {
-                return data.OrderBy(lambda);
-            }
-            else
-            {
-                return data.OrderByDescending(lambda);
-            }
+            // it's possible to cache that into a pair of delegates (for each direction) later,
+            // if performance demands it
+            return (IQueryable<TData>) GetGenericOrderByDirection(propertyInfo.PropertyType,
+                    order.Direction)
+                .Invoke(null, // invoking static method
+                    new object[]
+                    {
+                        data,
+                        lambda
+                    });
+        }
+
+        private static MethodInfo GetGenericOrderByDirection(Type keyType, OrderDirection direction)
+        {
+            var methodName = direction == OrderDirection.Ascending
+                ? nameof(Queryable.OrderBy)
+                : nameof(Queryable.OrderByDescending);
+
+            return typeof(Queryable)
+                .GetMethods(BindingFlags.Public | BindingFlags.Static)
+                .Where(method => method.Name == methodName)
+                // select overload which accepts only queryable and keySelector
+                .Single(method => method.GetParameters().Length == 2)
+                .MakeGenericMethod(typeof(TData), keyType);
         }
 
         private static PropertyInfo PropertyInfoFromName(string propertyName)

@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using NUnit.Framework;
 using Starcounter.Uniform.Generic.FilterAndSort;
 using Starcounter.Uniform.Queryables;
@@ -87,21 +88,37 @@ namespace Starcounter.Uniform.Tests.Queryables
                 new RowDataModel {Name = "Amanda", Number = 1}
             }.AsQueryable();
 
-            var expectedOrderedData = new List<RowDataModel>
+            var filterOrderConfiguration = new FilterOrderConfiguration()
             {
-                new RowDataModel {Name = "Amanda", Number = 1},
-                new RowDataModel {Name = "Ann", Number = 0},
-                new RowDataModel {Name = "Clark", Number = 2},
-                new RowDataModel {Name = "Tom", Number = 3}
-            }.AsQueryable();
-
-            var order = new Order { PropertyName = "Name", Direction = OrderDirection.Ascending};
-            var filterOrderConfiguration = new FilterOrderConfiguration();
-            filterOrderConfiguration.Ordering.Add(order);
+                Ordering = {new Order {PropertyName = nameof(RowDataModel.Name), Direction = OrderDirection.Ascending}}
+            };
 
             var returnedData = _sut.Apply(data, filterOrderConfiguration);
 
-            returnedData.Should().BeEquivalentTo(expectedOrderedData, options => options.WithStrictOrdering());
+            returnedData.Select(model => model.Name).Should().BeInAscendingOrder();
+        }
+
+        [Test]
+        public void ApplyingIntOrderingShouldReturnProperRowsDatasOrdered()
+        {
+            var data = new List<RowDataModel>
+            {
+                new RowDataModel {Name = "Tom", Number = 2},
+                new RowDataModel {Name = "Ann", Number = 0},
+                new RowDataModel {Name = "Clark", Number = 3},
+                new RowDataModel {Name = "Amanda", Number = 1}
+            }.AsQueryable();
+            var filterOrderConfiguration = new FilterOrderConfiguration()
+            {
+                Ordering =
+                {
+                    new Order {PropertyName = nameof(RowDataModel.Number), Direction = OrderDirection.Ascending}
+                }
+            };
+
+            var returnedData = _sut.Apply(data, filterOrderConfiguration);
+
+            returnedData.Select(model => model.Number).Should().BeInAscendingOrder();
         }
 
         [Test]
