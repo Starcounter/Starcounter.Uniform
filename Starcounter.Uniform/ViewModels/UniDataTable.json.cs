@@ -27,8 +27,15 @@ namespace Starcounter.Uniform.ViewModels
             return this;
         }
 
-        private void LoadRows()
+        private void LoadRows(bool clearPages = false)
         {
+            if (clearPages)
+            {
+                this.DataProvider.PaginationConfiguration.CurrentPageIndex = 0;
+                this.Pagination.CurrentPageIndex = 0;
+                this.Pages.Clear();
+            }
+
             var page = this.DataProvider.PaginationConfiguration.CurrentPageIndex;
             if (page > 0)
             {
@@ -66,7 +73,7 @@ namespace Starcounter.Uniform.ViewModels
         public partial class PaginationViewModel : Json
         {
             public IFilteredDataProvider<Json> DataProvider { get; set; }
-            public Action LoadRows { get; set; }
+            public Action<bool> LoadRows { get; set; }
 
             public int PageSize => DataProvider.PaginationConfiguration.PageSize;
 
@@ -84,13 +91,13 @@ namespace Starcounter.Uniform.ViewModels
                     DataProvider.PaginationConfiguration.CurrentPageIndex = newPageIndex > PagesCount ? PagesCount : newPageIndex;
                 }
 
-                LoadRows?.Invoke();
+                LoadRows?.Invoke(false);
             }
 
             public void Handle(Input.PageSize action)
             {
                 DataProvider.PaginationConfiguration.PageSize = (int)action.Value;
-                LoadRows?.Invoke(); // TODO: Reset all rows data and load only current page with new size?
+                LoadRows?.Invoke(true);
             }
         }
 
@@ -98,7 +105,7 @@ namespace Starcounter.Uniform.ViewModels
         public partial class ColumnsViewModel : Json, IBound<DataTableColumn>
         {
             public IFilteredDataProvider<Json> DataProvider { get; set; }
-            public Action LoadRows { get; set; }
+            public Action<bool> LoadRows { get; set; }
 
             public void Handle(Input.Filter action)
             {
@@ -118,14 +125,14 @@ namespace Starcounter.Uniform.ViewModels
                     });
                 }
 
-                LoadRows?.Invoke();
+                LoadRows?.Invoke(true);
             }
 
             public void Handle(Input.Sort action)
             {
                 if (action.Value != "asc" && action.Value != "desc" && !string.IsNullOrEmpty(action.Value))
                 {
-                    return; // TODO: For some reason this if is not working
+                    return;
                 }
 
                 var order =
@@ -151,7 +158,7 @@ namespace Starcounter.Uniform.ViewModels
                     });
                 }
 
-                LoadRows?.Invoke();
+                LoadRows?.Invoke(false);
             }
 
             private static OrderDirection ParseOrderDirection(string orderString)
