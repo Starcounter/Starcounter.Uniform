@@ -72,6 +72,7 @@
     <Compile Include="Queryables\QueryableFilterTests.cs" />
     <Compile Include="RowDataModel.cs" />
     <Compile Include="RowViewModel.cs" />
+    <Compile Include="ViewModels\UniFormItemTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
