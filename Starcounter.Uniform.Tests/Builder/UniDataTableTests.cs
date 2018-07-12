@@ -196,5 +196,26 @@ namespace Starcounter.Uniform.Tests.Builder
 
             _dataProviderMock.Object.FilterOrderConfiguration.Ordering.Should().BeEmpty();
         }
+
+        [Test]
+        public void AfterCallingFilterHandleProperRowsShouldBeLoaded()
+        {
+            var filterValue = "A";
+            _dataTableColumns.Add(new DataTableColumn { PropertyName = _columnPropertyName });
+            var annRowModel = new RowViewModel { Name = "Ann" };
+            IReadOnlyCollection<Json> expectedCollection = new List<RowViewModel>
+            {
+                annRowModel
+            };
+
+            _dataProviderMock
+                .When(() => _dataProviderMock.Object.FilterOrderConfiguration.Filters.Any(x => x.Value == filterValue))
+                .Setup(x => x.CurrentPageRows).Returns(expectedCollection);
+            InitSut();
+            var firstNameColumn = _sut.Columns.First(x => x.PropertyName == _columnPropertyName);
+
+            firstNameColumn.Handle(new UniDataTable.ColumnsViewModel.Input.Filter { Value = filterValue });
+            _sut.Pages.Should().ContainSingle().Which.Rows.Should().ContainSingle(x => x == annRowModel);
+        }
     }
 }
