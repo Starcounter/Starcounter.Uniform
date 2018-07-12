@@ -67,7 +67,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Builder\DataColumnBuilderTests.cs" />
-    <Compile Include="Builder\UniDataTableTests.cs" />
+    <Compile Include="ViewModels\UniDataTableTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Queryables\QueryableFilterTests.cs" />
     <Compile Include="RowDataModel.cs" />

@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Starcounter.Uniform.Tests.Builder
+namespace Starcounter.Uniform.Tests.ViewModels
 {
     public class UniDataTableTests
     {
