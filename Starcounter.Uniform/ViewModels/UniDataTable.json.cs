@@ -107,6 +107,9 @@ namespace Starcounter.Uniform.ViewModels
             public IFilteredDataProvider<Json> DataProvider { get; set; }
             public Action<bool> LoadRows { get; set; }
 
+            private static string Descending => "desc";
+            private static string Ascending => "asc";
+
             public void Handle(Input.Filter action)
             {
                 var filter =
@@ -130,7 +133,7 @@ namespace Starcounter.Uniform.ViewModels
 
             public void Handle(Input.Sort action)
             {
-                if (action.Value != "asc" && action.Value != "desc" && !string.IsNullOrEmpty(action.Value))
+                if (action.Value != Ascending && action.Value != Descending && !string.IsNullOrEmpty(action.Value))
                 {
                     return;
                 }
@@ -163,7 +166,7 @@ namespace Starcounter.Uniform.ViewModels
 
             private static OrderDirection ParseOrderDirection(string orderString)
             {
-                return orderString == "asc" ? OrderDirection.Ascending : OrderDirection.Descending;
+                return orderString == Ascending ? OrderDirection.Ascending : OrderDirection.Descending;
             }
         }
 
