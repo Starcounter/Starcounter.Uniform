@@ -5,7 +5,7 @@
     <version>$version$</version>
     <title>$title$</title>
     <authors>Starcounter, Zarel, joozek78</authors>
-    <owners>$author$</owners>
+    <owners>$author$, Starcounter</owners>
     <licenseUrl>https://github.com/Starcounter/Starcounter.Uniform/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/Starcounter/Starcounter.Uniform</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
