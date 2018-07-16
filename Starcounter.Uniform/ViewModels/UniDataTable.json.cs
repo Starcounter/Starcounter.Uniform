@@ -17,6 +17,7 @@ namespace Starcounter.Uniform.ViewModels
 
             Pagination.DataProvider = dataProvider;
             Pagination.LoadRows = LoadRows;
+            Pagination.LoadRowsFromFirstPage = LoadRowsFromFirstPage;
 
             this.DataProvider.PaginationConfiguration = new PaginationConfiguration(initialPageSize, initialPageIndex);
             this.DataProvider.FilterOrderConfiguration = new FilterOrderConfiguration();
@@ -27,15 +28,17 @@ namespace Starcounter.Uniform.ViewModels
             return this;
         }
 
-        private void LoadRows(bool clearPages = false)
+        private void LoadRowsFromFirstPage()
         {
-            if (clearPages)
-            {
-                this.DataProvider.PaginationConfiguration.CurrentPageIndex = 0;
-                this.Pagination.CurrentPageIndex = 0;
-                this.Pages.Clear();
-            }
+            this.DataProvider.PaginationConfiguration.CurrentPageIndex = 0;
+            this.Pagination.CurrentPageIndex = 0;
+            this.Pages.Clear();
 
+            this.LoadRows();
+        }
+
+        private void LoadRows()
+        {
             var page = this.DataProvider.PaginationConfiguration.CurrentPageIndex;
             if (page > 0)
             {
@@ -65,7 +68,7 @@ namespace Starcounter.Uniform.ViewModels
                 var column = this.Columns.Add();
                 column.Data = sourceColumn;
                 column.DataProvider = this.DataProvider;
-                column.LoadRows = LoadRows;
+                column.LoadRowsFromFirstPage = LoadRowsFromFirstPage;
             }
         }
 
@@ -73,7 +76,8 @@ namespace Starcounter.Uniform.ViewModels
         public partial class PaginationViewModel : Json
         {
             public IFilteredDataProvider<Json> DataProvider { get; set; }
-            public Action<bool> LoadRows { get; set; }
+            public Action LoadRows { get; set; }
+            public Action LoadRowsFromFirstPage { get; set; }
 
             public int PageSize => DataProvider.PaginationConfiguration.PageSize;
 
@@ -91,13 +95,13 @@ namespace Starcounter.Uniform.ViewModels
                     DataProvider.PaginationConfiguration.CurrentPageIndex = newPageIndex > PagesCount ? PagesCount : newPageIndex;
                 }
 
-                LoadRows?.Invoke(false);
+                LoadRows?.Invoke();
             }
 
             public void Handle(Input.PageSize action)
             {
                 DataProvider.PaginationConfiguration.PageSize = (int)action.Value;
-                LoadRows?.Invoke(true);
+                LoadRowsFromFirstPage?.Invoke();
             }
         }
 
@@ -105,7 +109,7 @@ namespace Starcounter.Uniform.ViewModels
         public partial class ColumnsViewModel : Json, IBound<DataTableColumn>
         {
             public IFilteredDataProvider<Json> DataProvider { get; set; }
-            public Action<bool> LoadRows { get; set; }
+            public Action LoadRowsFromFirstPage { get; set; }
 
             private static string Descending => "desc";
             private static string Ascending => "asc";
@@ -128,7 +132,7 @@ namespace Starcounter.Uniform.ViewModels
                     });
                 }
 
-                LoadRows?.Invoke(true);
+                LoadRowsFromFirstPage?.Invoke();
             }
 
             public void Handle(Input.Sort action)
@@ -161,7 +165,7 @@ namespace Starcounter.Uniform.ViewModels
                     });
                 }
 
-                LoadRows?.Invoke(false);
+                LoadRowsFromFirstPage?.Invoke();
             }
 
             private static OrderDirection ParseOrderDirection(string orderString)
