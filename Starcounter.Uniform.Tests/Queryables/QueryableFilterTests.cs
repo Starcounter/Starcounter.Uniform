@@ -12,8 +12,8 @@ namespace Starcounter.Uniform.Tests.Queryables
         private QueryableFilter<RowDataModel> _sut;
         private IQueryable<RowDataModel> _rowDataModels = new List<RowDataModel>
         {
-            new RowDataModel {Name = "Tom", Number = 0},
-            new RowDataModel {Name = "Ann", Number = 2},
+            new RowDataModel {Name = "Tom", Number = 0, Flag = true},
+            new RowDataModel {Name = "Ann", Number = 2, Flag = false},
             new RowDataModel {Name = "Clark", Number = 1},
             new RowDataModel {Name = "Amanda", Number = 3},
             new RowDataModel {Name = "Abi", Number = 4}
@@ -67,6 +67,33 @@ namespace Starcounter.Uniform.Tests.Queryables
             var returnedData = ApplyFilteringOrdering(new[] { filter });
 
             returnedData.Should().NotContain(x => x.Name == "Tom");
+        }
+
+        [Test]
+        public void ApplyStringFilterShouldReturnProperRowDatas()
+        {
+            var aFilter = new Filter { PropertyName = "Name", Value = "Clark" };
+            var returnedData = ApplyFilteringOrdering(new[] { aFilter });
+
+            returnedData.Should().ContainSingle().Which.Name.Should().Be("Clark");
+        }
+
+        [Test]
+        public void ApplyNumberFilterShouldReturnProperRowDatas()
+        {
+            var numberFilter = new Filter { PropertyName = "Number", Value = "3" };
+            var returnedData = ApplyFilteringOrdering(new[] { numberFilter });
+
+            returnedData.Should().ContainSingle().Which.Name.Should().Be("Amanda");
+        }
+
+        [Test]
+        public void ApplyIncorrectTypeFilterShouldReturnEmptyRowDatas()
+        {
+            var flagFilter = new Filter { PropertyName = "Flag", Value = "true" };
+            var returnedData = ApplyFilteringOrdering(new[] { flagFilter });
+
+            returnedData.Should().BeEmpty();
         }
 
         [Test]

@@ -57,17 +57,18 @@ namespace Starcounter.Uniform.Queryables
 
             var parameterExpression = Expression.Parameter(typeof(TData), "x");
             var propertyExpression = Expression.Property(parameterExpression, propertyInfo);
-            var propertyWithToStringExpression =
-                // ReSharper disable once AssignNullToNotNullAttribute, object.ToString will never be null
-                Expression.Call(propertyExpression, typeof(object).GetMethod(nameof(object.ToString)));
-            var containsMethod = typeof(string).GetMethod(nameof(string.Contains), new[] { typeof(string) });
 
-            // ReSharper disable once AssignNullToNotNullAttribute, string will always have Contains method
-            var containsMethodExp = Expression.Call(propertyWithToStringExpression, containsMethod, Expression.Constant(filter.Value));
+            var filterMethodExp = GetFilterMethodCallExpression(propertyInfo.PropertyType, propertyExpression, filter.Value);
+            if (filterMethodExp != null)
+            {
+                var lambda = Expression.Lambda<Func<TData, bool>>(filterMethodExp, parameterExpression);
 
-            var lambda = Expression.Lambda<Func<TData, bool>>(containsMethodExp, parameterExpression);
-
-            return data.Where(lambda);
+                return data.Where(lambda);
+            }
+            else
+            {
+                return Enumerable.Empty<TData>().AsQueryable();
+            }
         }
 
         /// <summary>
@@ -101,6 +102,22 @@ namespace Starcounter.Uniform.Queryables
                         data,
                         lambda
                     });
+        }
+
+        private static MethodCallExpression GetFilterMethodCallExpression(Type keyType, MemberExpression propertyExpression, string filterValue)
+        {
+            if (keyType == typeof(string))
+            {
+                var method = typeof(string).GetMethod(nameof(string.Contains));
+                return Expression.Call(propertyExpression, method, Expression.Constant(filterValue));
+            }
+            else
+            {
+                var method = typeof(int).GetMethod(nameof(int.Equals), new[] { typeof(int) });
+                var isFilterValueANumber = int.TryParse(filterValue, out var intFilterValue);
+
+                return isFilterValueANumber ? Expression.Call(propertyExpression, method, Expression.Constant(intFilterValue)) : null;
+            }
         }
 
         private static MethodInfo GetGenericOrderByDirection(Type keyType, OrderDirection direction)
