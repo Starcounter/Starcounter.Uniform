@@ -88,6 +88,15 @@ namespace Starcounter.Uniform.Tests.Queryables
         }
 
         [Test]
+        public void ApplyIncorrectNumberFilterShouldReturnProperRowDatas()
+        {
+            var numberFilter = new Filter { PropertyName = "Number", Value = "3.5" };
+            var returnedData = ApplyFilteringOrdering(new[] { numberFilter });
+
+            returnedData.Should().BeEmpty();
+        }
+
+        [Test]
         public void ApplyIncorrectTypeFilterShouldReturnEmptyRowDatas()
         {
             var flagFilter = new Filter { PropertyName = "Flag", Value = "true" };
