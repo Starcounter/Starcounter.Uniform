@@ -57,8 +57,13 @@ namespace Starcounter.Uniform.Queryables
 
             var parameterExpression = Expression.Parameter(typeof(TData), "x");
             var propertyExpression = Expression.Property(parameterExpression, propertyInfo);
-            var containsMethod = typeof(string).GetMethod("Contains", new[] { typeof(string) }) ?? throw new InvalidOperationException();
-            var containsMethodExp = Expression.Call(propertyExpression, containsMethod, Expression.Constant(filter.Value));
+            var propertyWithToStringExpression =
+                // ReSharper disable once AssignNullToNotNullAttribute, object.ToString will never be null
+                Expression.Call(propertyExpression, typeof(object).GetMethod(nameof(object.ToString)));
+            var containsMethod = typeof(string).GetMethod(nameof(string.Contains), new[] { typeof(string) });
+
+            // ReSharper disable once AssignNullToNotNullAttribute, string will always have Contains method
+            var containsMethodExp = Expression.Call(propertyWithToStringExpression, containsMethod, Expression.Constant(filter.Value));
 
             var lambda = Expression.Lambda<Func<TData, bool>>(containsMethodExp, parameterExpression);
 
@@ -88,7 +93,7 @@ namespace Starcounter.Uniform.Queryables
 
             // it's possible to cache that into a pair of delegates (for each direction) later,
             // if performance demands it
-            return (IQueryable<TData>) GetGenericOrderByDirection(propertyInfo.PropertyType,
+            return (IQueryable<TData>)GetGenericOrderByDirection(propertyInfo.PropertyType,
                     order.Direction)
                 .Invoke(null, // invoking static method
                     new object[]

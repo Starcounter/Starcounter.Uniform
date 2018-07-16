@@ -50,7 +50,7 @@ namespace Starcounter.Uniform.Tests.ViewModels
 
             _sut.Columns.Should().HaveCount(1);
             _sut.Columns.Should().ContainSingle().Which.DisplayName.Should().Be(columnDisplayName);
-            _sut.Columns.Should().ContainSingle().Which.LoadRows.Should().NotBeNull();
+            _sut.Columns.Should().ContainSingle().Which.LoadRowsFromFirstPage.Should().NotBeNull();
         }
 
         [Test]

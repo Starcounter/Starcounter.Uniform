@@ -1,11 +1,9 @@
-﻿using System;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using Starcounter.Uniform.Generic.FilterAndSort;
 using Starcounter.Uniform.Queryables;
 using System.Collections.Generic;
 using System.Linq;
-using FluentAssertions.Primitives;
 
 namespace Starcounter.Uniform.Tests.Queryables
 {
@@ -58,7 +56,7 @@ namespace Starcounter.Uniform.Tests.Queryables
             var nameToFilter = "Ann";
             var filter = new Filter { PropertyName = "Name", Value = nameToFilter };
 
-            var returnedData = ApplyFilteringOrdering(new[] {filter});
+            var returnedData = ApplyFilteringOrdering(new[] { filter });
             returnedData.Should().ContainSingle().Which.Name.Should().Be(nameToFilter);
         }
 
@@ -75,17 +73,17 @@ namespace Starcounter.Uniform.Tests.Queryables
         public void ApplyingMultipleFiltersShouldReturnProperRowsDatas()
         {
             var aFilter = new Filter { PropertyName = "Name", Value = "A" };
-            var annFilter = new Filter { PropertyName = "Name", Value = "Ann" };
-            var returnedData = ApplyFilteringOrdering(new[] { aFilter, annFilter });
+            var numberFilter = new Filter { PropertyName = "Number", Value = "4" };
+            var returnedData = ApplyFilteringOrdering(new[] { aFilter, numberFilter });
 
-            returnedData.Should().ContainSingle().Which.Name.Should().Be("Ann");
+            returnedData.Should().ContainSingle().Which.Name.Should().Be("Abi");
         }
 
         [Test]
         public void ApplyingOrderingShouldReturnProperRowsDatasOrdered()
         {
-            var order = new Order {PropertyName = nameof(RowDataModel.Name), Direction = OrderDirection.Ascending};
-            var returnedData = ApplyFilteringOrdering(null, new[] {order});
+            var order = new Order { PropertyName = nameof(RowDataModel.Name), Direction = OrderDirection.Ascending };
+            var returnedData = ApplyFilteringOrdering(null, new[] { order });
 
             returnedData.Select(model => model.Name).Should().BeInAscendingOrder();
         }
@@ -93,7 +91,7 @@ namespace Starcounter.Uniform.Tests.Queryables
         [Test]
         public void ApplyingIntOrderingShouldReturnProperRowsDatasOrdered()
         {
-            var order = new Order {PropertyName = nameof(RowDataModel.Number), Direction = OrderDirection.Ascending};
+            var order = new Order { PropertyName = nameof(RowDataModel.Number), Direction = OrderDirection.Ascending };
             var returnedData = ApplyFilteringOrdering(null, new[] { order });
 
             returnedData.Select(model => model.Number).Should().BeInAscendingOrder();
@@ -134,8 +132,8 @@ namespace Starcounter.Uniform.Tests.Queryables
                 new RowDataModel {Name = "Amanda", Number = 3},
                 new RowDataModel {Name = "Ann", Number = 2}
             }.AsQueryable();
-            var filter = new Filter {PropertyName = "Name", Value = "A"};
-            var order = new Order {PropertyName = "Name", Direction = OrderDirection.Ascending};
+            var filter = new Filter { PropertyName = "Name", Value = "A" };
+            var order = new Order { PropertyName = "Name", Direction = OrderDirection.Ascending };
 
             var returnedData = ApplyFilteringOrdering(new[] { filter }, new[] { order });
 
