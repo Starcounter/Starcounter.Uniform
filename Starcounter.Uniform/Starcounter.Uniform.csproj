@@ -52,8 +52,6 @@
     <Compile Include="Builder\DataProviderBuilder.cs" />
     <Compile Include="Builder\DataTableBuilder.cs" />
     <Compile Include="Builder\DataTableColumn.cs" />
-    <Compile Include="Builder\FormItemBuilder.cs" />
-    <Compile Include="Builder\MessageContainer.cs" />
     <Compile Include="FormItem\FormItemMessagesBuilder.cs" />
     <Compile Include="FormItem\FormItemMessage.cs" />
     <Compile Include="FormItem\MessageContainer.cs" />
