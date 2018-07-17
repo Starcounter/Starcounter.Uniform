@@ -1,7 +1,7 @@
 ﻿using Starcounter.Templates;
 using Starcounter.Uniform.Generic.FormItem;
 
-namespace Starcounter.Uniform.Builder
+namespace Starcounter.Uniform.FormItem
 {
     public class MessageContainer
     {
@@ -9,15 +9,32 @@ namespace Starcounter.Uniform.Builder
         {
             _invalid = container.Add<TString>("Invalid");
             _message = container.Add<TString>("Message");
+            _container = container;
         }
 
+        private readonly TObject _container;
         private readonly TString _message;
         private readonly TString _invalid;
 
         public void AddMessage(string message, Json view, MessageType type)
         {
-            view.Set(this._message, message);
-            view.Set(this._invalid, ParseMessageType(type));
+            view.Get(_container).Set(this._message, message);
+            view.Get(_container).Set(this._invalid, ParseMessageType(type));
+        }
+
+        public FormItemMessage GetMessage(Json view)
+        {
+            return new FormItemMessage
+            {
+                Text = view.Get(_container).Get(this._message),
+                Type = view.Get(_container).Get(this._invalid)
+            };
+        }
+
+        public void ClearMessage(Json view)
+        {
+            view.Get(_container).Set(this._message, string.Empty);
+            view.Get(_container).Set(this._invalid, string.Empty);
         }
 
         private string ParseMessageType(MessageType type)

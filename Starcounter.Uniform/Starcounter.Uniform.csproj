@@ -54,6 +54,9 @@
     <Compile Include="Builder\DataTableColumn.cs" />
     <Compile Include="Builder\FormItemBuilder.cs" />
     <Compile Include="Builder\MessageContainer.cs" />
+    <Compile Include="FormItem\FormItemMessagesBuilder.cs" />
+    <Compile Include="FormItem\FormItemMessage.cs" />
+    <Compile Include="FormItem\MessageContainer.cs" />
     <Compile Include="Generic\FilterAndSort\Filter.cs" />
     <Compile Include="Generic\FormItem\MessageType.cs" />
     <Compile Include="Queryables\FilteredPaginatedDataProvider.cs" />
@@ -72,7 +75,7 @@
     <Compile Include="ViewModels\UniDataTable.json.cs">
       <DependentUpon>UniDataTable.json</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\UniFormItem.cs" />
+    <Compile Include="ViewModels\ItemMessages.cs" />
   </ItemGroup>
   <ItemGroup>
     <TypedJSON Include="ViewModels\UniDataTable.json">
