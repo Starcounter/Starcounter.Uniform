@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Starcounter.Uniform.ViewModels
 {
-    public class ItemMessages : Json
+    public class FormItemMessages : Json
     {
         internal Dictionary<string, MessageContainer> MessageContainers { get; set; }
 

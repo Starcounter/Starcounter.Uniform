@@ -10,7 +10,7 @@ namespace Starcounter.Uniform.Tests.ViewModels
 {
     public class ItemMessagesTests
     {
-        private ItemMessages _sut;
+        private FormItemMessages _sut;
         private List<string> _multipleProperties => new List<string>
         {
             "Property1",

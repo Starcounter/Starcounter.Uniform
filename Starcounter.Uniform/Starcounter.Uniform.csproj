@@ -75,7 +75,7 @@
     <Compile Include="ViewModels\UniDataTable.json.cs">
       <DependentUpon>UniDataTable.json</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\ItemMessages.cs" />
+    <Compile Include="ViewModels\FormItemMessages.cs" />
   </ItemGroup>
   <ItemGroup>
     <TypedJSON Include="ViewModels\UniDataTable.json">

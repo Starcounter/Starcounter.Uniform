@@ -34,15 +34,15 @@ namespace Starcounter.Uniform.FormItem
         }
 
         /// <summary>
-        /// Builds the <see cref="ItemMessages"/> view-model object with message structures for given properties.
+        /// Builds the <see cref="FormItemMessages"/> view-model object with message structures for given properties.
         /// </summary>
-        /// <returns>The <see cref="ItemMessages"/> view-model object</returns>
-        public ItemMessages Build()
+        /// <returns>The <see cref="FormItemMessages"/> view-model object</returns>
+        public FormItemMessages Build()
         {
             var schema = new TObject();
             var messageContainers = _properties.ToDictionary(property => property, property => new MessageContainer(schema.Add<TObject>(property)));
 
-            return new ItemMessages
+            return new FormItemMessages
             {
                 Template = schema,
                 MessageContainers = messageContainers
