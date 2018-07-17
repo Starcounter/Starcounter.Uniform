@@ -1,10 +1,7 @@
-﻿using System;
+﻿using Starcounter.Templates;
+using Starcounter.Uniform.ViewModels;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Starcounter.Templates;
-using Starcounter.Uniform.ViewModels;
 
 namespace Starcounter.Uniform.Builder
 {
@@ -28,13 +25,13 @@ namespace Starcounter.Uniform.Builder
 
         public UniFormItem Build()
         {
-            var schema = new Json.JsonByExample.Schema();
-            var messageViewModels = _properties.ToDictionary(property => property, property => new MessageViewModel(schema.Add<TObject>(property)));
+            var schema = new TObject();
+            var messageContainers = _properties.ToDictionary(property => property, property => new MessageContainer(schema.Add<TObject>(property)));
 
             return new UniFormItem
             {
                 Template = schema,
-                MessageViewModels = messageViewModels
+                MessageContainers = messageContainers
             };
         }
     }

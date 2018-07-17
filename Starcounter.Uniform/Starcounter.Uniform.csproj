@@ -53,7 +53,7 @@
     <Compile Include="Builder\DataTableBuilder.cs" />
     <Compile Include="Builder\DataTableColumn.cs" />
     <Compile Include="Builder\FormItemBuilder.cs" />
-    <Compile Include="Builder\MessageViewModel.cs" />
+    <Compile Include="Builder\MessageContainer.cs" />
     <Compile Include="Generic\FilterAndSort\Filter.cs" />
     <Compile Include="Generic\FormItem\MessageType.cs" />
     <Compile Include="Queryables\FilteredPaginatedDataProvider.cs" />
