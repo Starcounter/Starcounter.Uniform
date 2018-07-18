@@ -45,24 +45,24 @@ To create basic `uni-data-table` structure:
 3. In your handler where you return your view-model that contains data table, add data table inicialization with `DataTableBuilder`.
 ```cs
 Handle.GET("/YourAppName/partial/datatable", () =>
-            {
-                return Db.Scope(() =>
-                {
-                    var dataTablePage = new DataTablePage();
-                    dataTablePage.DataTable = new DataTableBuilder<DataTableRowViewModel>()
-                        .WithDataSource(DbLinq.Objects<DataTableRowDataModel>())
-                        .WithColumns(columns =>
-                            columns
-                                .AddColumn(b => b.FirstName,
-                                    column => column.DisplayName("First Name").Sortable().Filterable())
-                                .AddColumn(b => b.LastName, column => column.Sortable().DisplayName("Last Name"))
-                                .AddColumn(b => b.Email,
-                                    column => column.Filterable().Sortable())))
-                        .Build();
+{
+    return Db.Scope(() =>
+    {
+        var dataTablePage = new DataTablePage();
+        dataTablePage.DataTable = new DataTableBuilder<DataTableRowViewModel>()
+            .WithDataSource(DbLinq.Objects<DataTableRowDataModel>())
+            .WithColumns(columns =>
+                columns
+                    .AddColumn(b => b.FirstName,
+                        column => column.DisplayName("First Name").Sortable().Filterable())
+                    .AddColumn(b => b.LastName, column => column.Sortable().DisplayName("Last Name"))
+                    .AddColumn(b => b.Email,
+                        column => column.Filterable().Sortable())))
+            .Build();
 
-                    return dataTablePage;
-                });
-            });
+        return dataTablePage;
+    });
+});
 ```
 
 After those steps your container object in view view-model should be populated with our `UniFormItem` view-model that `uni-data-table` component will understand and work with.
