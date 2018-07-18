@@ -1,5 +1,5 @@
 # Starcounter.Uniform
-Starcounter.Uniform is a helping library that provides server-side helpers for using and managing uniform components. 
+Starcounter.Uniform is a library that provides server-side helpers for using and managing uniform components. 
 
 It is available for downloading as [Starcounter.Uniform](https://www.nuget.org/packages/Starcounter.Uniform/) NuGet package.
 
@@ -7,12 +7,12 @@ It is available for downloading as [Starcounter.Uniform](https://www.nuget.org/p
 Requires Starcounter 2.4.0.6535 or later and .NET Framework 4.6.1.
 
 ## How to use
-First, in your Starcounter app project, install Starcounter.Uniform trough NuGet: `Install-Package Starcounter.Uniform` and add a reference to `Starcounter.Uniform.dll`.
+First, in your Starcounter app project, install Starcounter.Uniform with NuGet: `Install-Package Starcounter.Uniform` and add a reference to `Starcounter.Uniform.dll`.
 
 This library provides helping method for a variety of uniform components and way to use it is slightly different for each one of them.
 
 ## Uni-data-table
-`uni-data-table` is a custom element that is an adapter to `vaadin-grid`. It provides rich view of a data table which contain funcionalities like:
+One of the components that `Starcounter.Uniform` covers is `uni-data-table`. It provides rich view of a data table which contain funcionalities like:
 - Pagination or infinite scrolling.
 - Sorting.
 - Support for variety of column types.
@@ -33,7 +33,7 @@ To create basic `uni-data-table` structure:
 
 ```
 
-2. Create your data table row view-model, e.g.:
+2. Create your data table row view-model:
 ```json
 {
   "FirstName": "",
@@ -65,11 +65,11 @@ Handle.GET("/YourAppName/partial/datatable", () =>
             });
 ```
 
-After those steps your container object in view view-model should be populated with our U`niFormItem` view-model that `uni-data-table` component will understand and work with.
-You can find view-model structure used by `uni-data-table` on It's [readme page](https://github.com/Starcounter/uniform.css/tree/master/components/uni-data-table).
+After those steps your container object in view view-model should be populated with our `UniFormItem` view-model that `uni-data-table` component will understand and work with.
+You can find view-model structure used by `uni-data-table` on its [readme page](https://github.com/Starcounter/uniform.css/blob/master/components/uni-data-table/README.md).
 
 ### DataTableBuilder
-`DataTableBuilder` provides fluent API to easly create an instance of our UniDataTable view-model. To create It's instance you have to provide view-model for your rows data. Methods that `DataTableBuilder` provides are:
+`DataTableBuilder` provides fluent API to easily create an instance of our UniDataTable view-model. To create its instance you have to provide view-model for your rows data. Methods that `DataTableBuilder` provides are:
 
 | Method Name | Arguments | Description | Returns |
 | :--- | :--- | :--- | :--- |
