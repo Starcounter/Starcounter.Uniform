@@ -44,23 +44,15 @@ Let's say you want to add a data table with people information to your existing 
 
 3. In your `PeopleManagment.json.cs` add data table initialization with `DataTableBuilder`.
 ```cs
-Handle.GET("/YourAppName/partial/datatable", () =>
-{
-    return Db.Scope(() =>
-    {
-        var dataTablePage = new DataTablePage();
-        dataTablePage.DataTable = new DataTableBuilder<DataTableRowViewModel>()
-            .WithDataSource(DbLinq.Objects<DataTableRowDataModel>())
-            .WithColumns(columns =>
-                columns
-                    .AddColumn(b => b.FirstName, column => column.DisplayName("First Name").Sortable().Filterable())
-                    .AddColumn(b => b.LastName, column => column.Sortable().DisplayName("Last Name"))
-                    .AddColumn(b => b.Email, column => column.Filterable().Sortable().DisplayName("Email")))
-            .Build();
-
-        return dataTablePage;
-    });
-});
+this.DataTable = new DataTablePage();
+dataTablePage.DataTable = new DataTableBuilder<DataTableRowViewModel>()
+    .WithDataSource(DbLinq.Objects<DataTableRowDataModel>())
+    .WithColumns(columns =>
+        columns
+            .AddColumn(b => b.FirstName, column => column.DisplayName("First Name").Sortable().Filterable())
+            .AddColumn(b => b.LastName, column => column.Sortable().DisplayName("Last Name"))
+            .AddColumn(b => b.Email, column => column.Filterable().Sortable().DisplayName("Email")))
+    .Build();
 ```
 Note that you don't have to add a column for every property of the row view-model.
 
@@ -87,10 +79,61 @@ You can find view-model structure used by `uni-data-table` on its [readme page](
 | `WithInitialPageSize` | `int` | Specify the initial page size for the table. If this method is never called, the initial page index will be 50. |
 | `Build` | | Initializes the `UniDataTable` view-model with specified data source/provider, columns, initial page size and initial page index. |
 
-By using second overload of `WithDataSource` method, you can provide your own converter for creating row view-model instances, or/and your own way of applying filtering. Example implementation:
+### Computed columns
+Sometimes, you want to add a column that has **no property** on its own or maybe its value is computed from multiple properties. You can do that. Just call `AddColumn` specifying the name manually:
+
 ```c#
-// In handle.GET
-pageViewModel.DataTable = new DataTableBuilder<BookViewModel>()
+.AddColumn("FullName", column => column.Sortable().Filterable().DisplayName("Full name"))
+```
+If you want to support filtering and/or sorting by this column, you have to extend the default `Filter`:
+
+```c#
+public class BookFilter : QueryableFilter<Book>
+{
+  protected override IQueryable<Book> ApplyFilter(IQueryable<Book> data, Filter filter)
+  {
+    if (filter.PropertyName == nameof(BookViewModel.Display))
+    {
+        return data.Where(book => book.Author == filter.Value || book.Title == filter.Value);
+    }
+
+    return base.ApplyFilter(data, filter);
+  }
+}
+```
+and then register it:
+```c#
+.WithDataSource(DbLinq.Objects<Book>(), data => data
+          .WithFilter(new BookFilter()))
+```
+
+### Custom converter
+Sometimes, you want to control the creation of row view-models. You can do that with `WithConverter` method.
+
+First create your converter:
+```c#
+private BookViewModel CreateBookViewModel(Book book)
+{
+    var bookViewModel = new BookViewModel()
+    {
+        DeleteAction = DeleteBook 
+    };
+    ((Json) bookViewModel).Data = book;
+    return bookViewModel;
+}
+```
+
+and then register it:
+```c#
+.WithDataSource(DbLinq.Objects<Book>(), data => data
+          .WithConverter(CreateBookViewModel)
+```
+
+### Example implementation
+
+```c#
+// In your page view model .cs file:
+this.DataTable = new DataTableBuilder<BookViewModel>()
       .WithDataSource(DbLinq.Objects<Book>(), data => data
           .WithConverter(CreateBookViewModel)
           .WithFilter(new BookFilter()))
@@ -136,6 +179,7 @@ public class BookFilter : QueryableFilter<Book>
   }
 }
 ```
+
 ## History
 For detailed changelog, check [Releases](https://github.com/Starcounter/Starcounter.Uniform/releases).
 
