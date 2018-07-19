@@ -7,7 +7,7 @@ using System.Linq;
 namespace Starcounter.Uniform.Builder
 {
     /// <summary>
-    /// Provides fluent API to create instances of TODO
+    /// Provides fluent API to create instances of <see cref="UniDataTable"/> view-model.
     /// </summary>
     /// <typeparam name="TViewModel"></typeparam>
     public class DataTableBuilder<TViewModel>

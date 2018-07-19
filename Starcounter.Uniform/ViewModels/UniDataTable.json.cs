@@ -28,16 +28,11 @@ namespace Starcounter.Uniform.ViewModels
             return this;
         }
 
-        private void LoadRowsFromFirstPage()
-        {
-            this.DataProvider.PaginationConfiguration.CurrentPageIndex = 0;
-            this.Pagination.CurrentPageIndex = 0;
-            this.Pages.Clear();
-
-            this.LoadRows();
-        }
-
-        private void LoadRows()
+        /// <summary>
+        /// Loads rows for CurrentPageIndex from <see cref="PaginationConfiguration"/>. 
+        /// When page is bigger than zero this method will add missing dummy pages to maintain sparse page indicies in Pages collection.
+        /// </summary>
+        public void LoadRows()
         {
             var page = this.DataProvider.PaginationConfiguration.CurrentPageIndex;
             if (page > 0)
@@ -59,6 +54,15 @@ namespace Starcounter.Uniform.ViewModels
             this.Pages.Insert(page, newRowsData);
 
             this.TotalRows = this.DataProvider.TotalRows;
+        }
+
+        private void LoadRowsFromFirstPage()
+        {
+            this.DataProvider.PaginationConfiguration.CurrentPageIndex = 0;
+            this.Pagination.CurrentPageIndex = 0;
+            this.Pages.Clear();
+
+            this.LoadRows();
         }
 
         private void PopulateColumns(IEnumerable<DataTableColumn> sourceColumns)
