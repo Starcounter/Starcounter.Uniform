@@ -7,7 +7,7 @@ It is available for downloading as [Starcounter.Uniform](https://www.nuget.org/p
 Requires Starcounter 2.4.0.6535 or later and .NET Framework 4.6.1.
 
 ## How to use
-First, in your Starcounter app project, install Starcounter.Uniform with NuGet: `Install-Package Starcounter.Uniform` and add a reference to `Starcounter.Uniform.dll`.
+In your Starcounter app project, install Starcounter.Uniform with NuGet: `Install-Package Starcounter.Uniform`.
 
 This library provides helping method for a variety of uniform components and way to use it is slightly different for each one of them.
 
@@ -20,11 +20,11 @@ One of the components that `Starcounter.Uniform` covers is `uni-data-table`. It 
 More about `uni-data-table` component you can read in Uniform.css [readme for uni-data-table](https://github.com/Starcounter/uniform.css/tree/master/components/uni-data-table).
 
 ### Basic usage
-To cover most of the cases we provide default implementation of all needed components to generate data table structure. Although `uni-data-table` implementation is fully customizable and user can reimplement all of its part to work as he want it to.
+To cover most of the cases we provide default implementation of all needed components to generate data table structure. Although `uni-data-table` implementation is fully customizable and users can reimplement all of its part to work as they want it to.
 
-To create basic `uni-data-table` structure:
+Let's say you want to add a data table with people information to your existing view-model `PeopleManagement`. To do that:
 
-1. Provide container for data table structure in your json file:
+1. Add a property for the data table structure in your `PeopleManagement.json` file:
 
 ```json
 {
@@ -33,7 +33,7 @@ To create basic `uni-data-table` structure:
 
 ```
 
-2. Create your data table row view-model:
+2. Create your data table row view-model. Properties in this view-model will correspond to columns in the data table:
 ```json
 {
   "FirstName": "",
@@ -42,7 +42,7 @@ To create basic `uni-data-table` structure:
 }
 ```
 
-3. In your handler where you return your view-model that contains data table, add data table inicialization with `DataTableBuilder`.
+3. In your `PeopleManagment.json.cs` add data table initialization with `DataTableBuilder`.
 ```cs
 Handle.GET("/YourAppName/partial/datatable", () =>
 {
@@ -53,16 +53,22 @@ Handle.GET("/YourAppName/partial/datatable", () =>
             .WithDataSource(DbLinq.Objects<DataTableRowDataModel>())
             .WithColumns(columns =>
                 columns
-                    .AddColumn(b => b.FirstName,
-                        column => column.DisplayName("First Name").Sortable().Filterable())
+                    .AddColumn(b => b.FirstName, column => column.DisplayName("First Name").Sortable().Filterable())
                     .AddColumn(b => b.LastName, column => column.Sortable().DisplayName("Last Name"))
-                    .AddColumn(b => b.Email,
-                        column => column.Filterable().Sortable())))
+                    .AddColumn(b => b.Email, column => column.Filterable().Sortable().DisplayName("Email")))
             .Build();
 
         return dataTablePage;
     });
 });
+```
+Note that you don't have to add a column for every property of the row view-model.
+
+4. Add `<uni-data-table>` component to your view:
+```html
+<uni-data-table slot="uniformdocs/datatable-data-table"
+                provider="{{model.DataTable}}" auto-pagination>
+</uni-data-table>
 ```
 
 After those steps your container object in view view-model should be populated with our `UniFormItem` view-model that `uni-data-table` component will understand and work with.
@@ -71,17 +77,17 @@ You can find view-model structure used by `uni-data-table` on its [readme page](
 ### DataTableBuilder
 `DataTableBuilder` provides fluent API to easily create an instance of our UniDataTable view-model. To create its instance you have to provide view-model for your rows data. Methods that `DataTableBuilder` provides are:
 
-| Method Name | Arguments | Description | Returns |
-| :--- | :--- | :--- | :--- |
-| `WithDataSource` | `IQueryable<TData>` | Specifies the data source for the table with given `queryable` as the original data to expose. | The original `DataTableBuilder` with defined data source. |
-| `WithDataSource` | `IQueryable<TData>`, `Action<DataProviderBuilder<TData, TViewModel>>` | Specifies the data source for the table with given `queryable` as the original data to expose and configuration for the details of the data source. | The original `DataTableBuilder` with defined data source. |
+| Method Name | Arguments | Description |
+| :--- | :--- | :--- |
+| `WithDataSource` | `IQueryable<TData>` | Specifies the data source for the table with given `queryable` as the original data to expose. |
+| `WithDataSource` | `IQueryable<TData>`, `Action<DataProviderBuilder<TData, TViewModel>>` | Specifies the data source for the table with given `queryable` as the original data to expose and configuration for the details of the data source. |
 | `WithDataSource` | `IFilteredDataProvider<TViewModel>` | Specifies the data source for the table. This method allows the developer to use custom implementation of `IFilteredDataProvider`. | The original `DataTableBuilder` with defined data source. |
-| `WithColumns` | `Action<DataColumnBuilder<TViewModel>>` | Speficies the column structure of the table. | The original `DataTableBuilder` with defined columns. |
-| `WithInitialPageIndex` | `int` | Specify the initial page index for the table. If this method is never called, the initial page index will be zero. | The original `DataTableBuilder` with defined initial page index. |
-| `WithInitialPageSize` | `int` | Specify the initial page size for the table. If this method is never called, the initial page index will be 50. | The original `DataTableBuilder` with defined initial page size. |
-| `Build` | | Initializes the `UniDataTable` view-model with specified data source/provider, columns, initial page size and initial page index. | The `UniDataTable` view-model instance.
+| `WithColumns` | `Action<DataColumnBuilder<TViewModel>>` | Speficies the column structure of the table. |
+| `WithInitialPageIndex` | `int` | Specify the initial page index for the table. If this method is never called, the initial page index will be zero. |
+| `WithInitialPageSize` | `int` | Specify the initial page size for the table. If this method is never called, the initial page index will be 50. |
+| `Build` | | Initializes the `UniDataTable` view-model with specified data source/provider, columns, initial page size and initial page index. |
 
-By using second variant of `WithDataSource` method, you can provide your own converter for creating row view-model instances, or/and your own way of applying filtering. Example implementation:
+By using second overload of `WithDataSource` method, you can provide your own converter for creating row view-model instances, or/and your own way of applying filtering. Example implementation:
 ```c#
 // In handle.GET
 pageViewModel.DataTable = new DataTableBuilder<BookViewModel>()
