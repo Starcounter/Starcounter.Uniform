@@ -5,9 +5,21 @@ using System.Collections.Generic;
 
 namespace Starcounter.Uniform.ViewModels
 {
+    /// <summary>
+    /// View-model that provides API to manage form items metadata.
+    /// </summary>
     public class FormItemMetadata : Json
     {
-        internal Dictionary<string, MessageContainer> MessageContainers { get; set; }
+        private Dictionary<string, MessageContainer> MessageContainers { get; set; }
+
+        /// <summary>
+        /// Initializes <see cref="FormItemMetadata"/> with message containers.
+        /// </summary>
+        /// <param name="messageContainers">Message containers</param>
+        public void Init(Dictionary<string, MessageContainer> messageContainers)
+        {
+            this.MessageContainers = messageContainers;
+        }
 
         /// <summary>
         /// Gets message for given property.
@@ -66,7 +78,7 @@ namespace Starcounter.Uniform.ViewModels
             MessageContainers.TryGetValue(property, out var messageContainer);
             if (messageContainer == null)
             {
-                throw new ArgumentException("Property not found!", nameof(property));
+                throw new ArgumentException($"{property} was never declared. Make sure to call ForProperty({property}) builder method.");
             }
 
             return messageContainer;

@@ -5,9 +5,12 @@ using System.Linq;
 
 namespace Starcounter.Uniform.FormItem
 {
+    /// <summary>
+    /// Provides fluent API to create instances of <see cref="FormItemMetadata"/>
+    /// </summary>
     public class FormItemMessagesBuilder
     {
-        private List<string> _properties = new List<string>();
+        private readonly List<string> _properties = new List<string>();
 
         /// <summary>
         /// Specify the property to generate message structure for.
@@ -26,9 +29,9 @@ namespace Starcounter.Uniform.FormItem
         /// </summary>
         /// <param name="properties">The list of properties names</param>
         /// <returns>The original builder object</returns>
-        public FormItemMessagesBuilder ForProperties(List<string> properties)
+        public FormItemMessagesBuilder ForProperties(IEnumerable<string> properties)
         {
-            _properties = _properties.Concat(properties).ToList();
+            _properties.AddRange(properties);
 
             return this;
         }
@@ -42,11 +45,13 @@ namespace Starcounter.Uniform.FormItem
             var schema = new TObject();
             var messageContainers = _properties.ToDictionary(property => property, property => new MessageContainer(schema.Add<TObject>(property)));
 
-            return new FormItemMetadata
+            var formItemMetadata = new FormItemMetadata
             {
-                Template = schema,
-                MessageContainers = messageContainers
+                Template = schema
             };
+
+            formItemMetadata.Init(messageContainers);
+            return formItemMetadata;
         }
     }
 }

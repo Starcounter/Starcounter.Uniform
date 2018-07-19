@@ -3,7 +3,7 @@ using Starcounter.Uniform.Generic.FormItem;
 
 namespace Starcounter.Uniform.FormItem
 {
-    internal class MessageContainer
+    public class MessageContainer
     {
         public MessageContainer(TObject container)
         {

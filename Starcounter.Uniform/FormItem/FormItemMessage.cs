@@ -11,7 +11,7 @@
         public string Text { get; set; }
 
         /// <summary>
-        /// Can be true, false or empty which represents invalid, valid and neutral message.
+        /// Can be "true", "false" or "" which represents invalid, valid and neutral message.
         /// </summary>
         public string Type { get; set; }
     }
