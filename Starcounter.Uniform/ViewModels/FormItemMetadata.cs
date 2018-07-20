@@ -2,6 +2,8 @@
 using Starcounter.Uniform.Generic.FormItem;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Starcounter.Templates;
 
 namespace Starcounter.Uniform.ViewModels
 {
@@ -13,12 +15,16 @@ namespace Starcounter.Uniform.ViewModels
         private Dictionary<string, MessageContainer> MessageContainers { get; set; }
 
         /// <summary>
-        /// Initializes <see cref="FormItemMetadata"/> with message containers.
+        /// Initializes <see cref="FormItemMetadata"/> with given properties.
         /// </summary>
-        /// <param name="messageContainers">Message containers</param>
-        public void Init(Dictionary<string, MessageContainer> messageContainers)
+        /// <param name="properties">Properties list.</param>
+        public void Init(IEnumerable<string> properties)
         {
-            this.MessageContainers = messageContainers;
+            var schema = new TObject();
+            MessageContainers = properties.ToDictionary(
+                property => property,
+                property => new MessageContainer(schema.Add<TObject>(property)));
+            Template = schema;
         }
 
         /// <summary>

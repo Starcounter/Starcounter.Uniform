@@ -27,13 +27,31 @@ namespace Starcounter.Uniform.Tests.ViewModels
         }
 
         [Test]
+        public void InitializingFormItemMetadataSecondTimeShouldReplaceOldPropertiesWithNewOnes()
+        {
+            List<string> newProperties = new List<string>
+            {
+                "Property4",
+                "Property5"
+            };
+
+            _sut.Init(newProperties);
+
+            _sut.SetMessage(newProperties[0], _messageText, MessageType.Invalid);
+            var message = _sut.GetMessage(newProperties[0]);
+
+            message.Text.Should().Be(_messageText);
+            message.Type.Should().Be(MessageType.Invalid);
+        }
+
+        [Test]
         public void SetMessageShouldSetMessageWithProperTextAndInvalidType()
         {
             _sut.SetMessage(_properties[0], _messageText, MessageType.Invalid);
 
             var message = _sut.GetMessage(_properties[0]);
             message.Text.Should().Be(_messageText);
-            message.Type.Should().Be("true");
+            message.Type.Should().Be(MessageType.Invalid);
         }
 
         [Test]
@@ -41,11 +59,11 @@ namespace Starcounter.Uniform.Tests.ViewModels
         {
             _sut.SetMessage(_properties[0], _messageText, MessageType.Invalid);
             var message = _sut.GetMessage(_properties[0]);
-            message.Type.Should().Be("true");
+            message.Type.Should().Be(MessageType.Invalid);
 
             _sut.SetMessage(_properties[0], _messageText, MessageType.Valid);
             message = _sut.GetMessage(_properties[0]);
-            message.Type.Should().Be("false");
+            message.Type.Should().Be(MessageType.Valid);
         }
 
         [Test]
@@ -71,7 +89,7 @@ namespace Starcounter.Uniform.Tests.ViewModels
 
             var message = _sut.GetMessage(_properties[0]);
             message.Text.Should().BeEmpty();
-            message.Type.Should().BeEmpty();
+            message.Type.Should().Be(MessageType.Neutral);
         }
 
         [Test]
@@ -84,10 +102,10 @@ namespace Starcounter.Uniform.Tests.ViewModels
 
             var message = _sut.GetMessage(_properties[0]);
             message.Text.Should().BeEmpty();
-            message.Type.Should().BeEmpty();
+            message.Type.Should().Be(MessageType.Neutral);
             message = _sut.GetMessage(_properties[1]);
             message.Text.Should().BeEmpty();
-            message.Type.Should().BeEmpty();
+            message.Type.Should().Be(MessageType.Neutral);
         }
 
         [Test]
@@ -99,13 +117,13 @@ namespace Starcounter.Uniform.Tests.ViewModels
 
             var message = _sut.GetMessage(_properties[0]);
             message.Text.Should().Be("Test message 0");
-            message.Type.Should().Be("true");
+            message.Type.Should().Be(MessageType.Invalid);
             message = _sut.GetMessage(_properties[1]);
             message.Text.Should().Be("Test message 1");
-            message.Type.Should().Be("false");
+            message.Type.Should().Be(MessageType.Valid);
             message = _sut.GetMessage(_properties[2]);
             message.Text.Should().Be("Test message 2");
-            message.Type.Should().BeEmpty();
+            message.Type.Should().Be(MessageType.Neutral);
         }
     }
 }

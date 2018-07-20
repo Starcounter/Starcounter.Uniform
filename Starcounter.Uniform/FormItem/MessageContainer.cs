@@ -27,7 +27,7 @@ namespace Starcounter.Uniform.FormItem
             return new FormItemMessage
             {
                 Text = view.Get(_container).Get(this._message),
-                Type = view.Get(_container).Get(this._invalid)
+                Type = ParseMessageType(view.Get(_container).Get(this._invalid))
             };
         }
 
@@ -47,6 +47,19 @@ namespace Starcounter.Uniform.FormItem
                     return "false";
                 default:
                     return string.Empty;
+            }
+        }
+
+        private MessageType ParseMessageType(string type)
+        {
+            switch (type)
+            {
+                case "true":
+                    return MessageType.Invalid;
+                case "false":
+                    return MessageType.Valid;
+                default:
+                    return MessageType.Neutral;
             }
         }
     }

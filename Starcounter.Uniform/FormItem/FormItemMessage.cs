@@ -1,4 +1,6 @@
-﻿namespace Starcounter.Uniform.FormItem
+﻿using Starcounter.Uniform.Generic.FormItem;
+
+namespace Starcounter.Uniform.FormItem
 {
     /// <summary>
     /// Class that represents message object of a form item.
@@ -11,8 +13,8 @@
         public string Text { get; set; }
 
         /// <summary>
-        /// Can be "true", "false" or "" which represents invalid, valid and neutral message.
+        /// Represents type of the message. Message type can be either invalid ("true"), valid ("false") or neutral ("").
         /// </summary>
-        public string Type { get; set; }
+        public MessageType Type { get; set; }
     }
 }

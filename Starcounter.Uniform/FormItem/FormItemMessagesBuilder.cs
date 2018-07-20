@@ -42,15 +42,8 @@ namespace Starcounter.Uniform.FormItem
         /// <returns>The <see cref="FormItemMetadata"/> view-model object</returns>
         public FormItemMetadata Build()
         {
-            var schema = new TObject();
-            var messageContainers = _properties.ToDictionary(property => property, property => new MessageContainer(schema.Add<TObject>(property)));
-
-            var formItemMetadata = new FormItemMetadata
-            {
-                Template = schema
-            };
-
-            formItemMetadata.Init(messageContainers);
+            var formItemMetadata = new FormItemMetadata();
+            formItemMetadata.Init(_properties);
             return formItemMetadata;
         }
     }
