@@ -180,6 +180,77 @@ public class BookFilter : QueryableFilter<Book>
 }
 ```
 
+## Uni-form-item & uni-form-item-group
+`uni-form-item`is an uniform component that provides possibility to decorate an optional native `<label>`, any native or custom form control element, and an optional `<output>` message as form item. `uni-form-item-group` allows to group multiple `uni-form-item` elements into one form group with separate label and message.
+
+More about `uni-form-item` and `uni-form-item-group` components you can read in Uniform.css [readme for uni-form-item](https://github.com/Starcounter/uniform.css/blob/master/components/uni-form-item/README.md) and [readme for uni-form-item-group](https://github.com/Starcounter/uniform.css/blob/master/components/uni-form-item-group/README.md).
+
+### FormItemMessagesBuilder
+`uni-form-item`/`uni-form-item-group` helper part works based on `FormItemMetadata` structure that is fulled with proper view-model for given properties. Structure of this view-model looks like this:
+
+```json
+"FormItemMetadata": {
+    "FieldName": {
+        "Message": "",
+        "Invalid": ""
+    }    
+}
+```
+
+To generate such structure, you have to use `FormItemMessagesBuilder()` which provides following methods:
+
+| Method Name | Arguments | Description |
+| :--- | :--- | :--- |
+| `ForProperty` | `string` | Specifies the property to generate message structure for. |
+| `ForProperties` | `IEnumerable<string>` | Specifies the properties to generate message structures for. |
+| `Build` | | Initializes the `FormItemMetadata` for specified properties. |
+
+### FormItemMetadata
+After calling `FormItemMessagesBuilder` `Build()` method, you will end up with `FormItemMetadata` view-model with message structure for each previously described property. It also contains API for managing messages for each property:
+
+| Method Name | Arguments | Description |
+| :--- | :--- | :--- |
+| `SetMessage` | `string`, `string`, `MessageType` | Sets the message of specified type and with specified text for the given property name. |
+| `GetMessage` | `string` | Returns the `FormItemMessage` object, which contains text and type of a message for the given property name. |
+| `ClearMessage` | `string` | Clears the message for the given property name. |
+| `ClearAllMessages` | | Clears all the messages. |
+
+### Example usage
+To start using the helper in your `BookReservationPage` you have to:
+
+1. Add a property for the `FormItemMetadata` structure in your `BookReservationPage.json` file:
+```json
+{
+  "FormItemMetadata": {}
+}
+```
+
+2. Set `InstanceType` for your newly added property to `FormItemMetadata`: 
+```c#
+static BookReservationPage()
+{
+    DefaultTemplate.FormItemMetadata.InstanceType = typeof(FormItemMetadata);
+}
+```
+3. Initialize `FormItemMetadata` structure by specifing which properties should have proper metadata structure in `FormItemMessagesBuilder` (note that you can give it any property name, even one that is not present in your `.json` file.) and then calling its `Build()` method:
+```c#
+public void Init()
+{
+    this.FormItemMetadata = new FormItemMessagesBuilder().ForProperty(nameof(this.Title)).Build();
+}
+```
+
+4. Start using it!:
+```c#
+void Handle(Input.Title action)
+{
+    if (action.Value == "A Song of Ice and Fire")
+    {
+        this.FormItemMetadata.SetMessage(nameof(this.Title), "This book is currently unavailable!", MessageType.Invalid);
+    }
+}
+```
+
 ## History
 For detailed changelog, check [Releases](https://github.com/Starcounter/Starcounter.Uniform/releases).
 
