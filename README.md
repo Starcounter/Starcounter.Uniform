@@ -181,12 +181,12 @@ public class BookFilter : QueryableFilter<Book>
 ```
 
 ## Uni-form-item & uni-form-item-group
-`uni-form-item`is an uniform component that provides possibility to decorate an optional native `<label>`, any native or custom form control element, and an optional `<output>` message as form item. `uni-form-item-group` allows to group multiple `uni-form-item` elements into one form group with separate label and message.
+`uni-form-item` is an uniform component that provides possibility to decorate an optional native `<label>`, any native or custom form control element, and an optional `<output>` message as form item. `uni-form-item-group` allows to group multiple `uni-form-item` elements into one form group with separate label and message.
 
 More about `uni-form-item` and `uni-form-item-group` components you can read in Uniform.css [readme for uni-form-item](https://github.com/Starcounter/uniform.css/blob/master/components/uni-form-item/README.md) and [readme for uni-form-item-group](https://github.com/Starcounter/uniform.css/blob/master/components/uni-form-item-group/README.md).
 
 ### FormItemMessagesBuilder
-`uni-form-item`/`uni-form-item-group` helper part works based on `FormItemMetadata` structure that is fulled with proper view-model for given properties. Structure of this view-model looks like this:
+`uni-form-item`/`uni-form-item-group` helper part works based on `FormItemMetadata` structure that is filled with proper view-model for given properties. Structure of this view-model looks like this:
 
 ```json
 "FormItemMetadata": {
