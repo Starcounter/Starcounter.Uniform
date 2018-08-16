@@ -92,6 +92,7 @@ public class BookFilter : QueryableFilter<Book>
 {
   protected override IQueryable<Book> ApplyFilter(IQueryable<Book> data, Filter filter)
   {
+    if (filter == null) throw new ArgumentNullException(nameof(filter));
     if (filter.PropertyName == nameof(BookViewModel.Display))
     {
         return data.Where(book => book.Author == filter.Value || book.Title == filter.Value);
@@ -99,13 +100,28 @@ public class BookFilter : QueryableFilter<Book>
 
     return base.ApplyFilter(data, filter);
   }
+  
+  protected override IQueryable<Book> ApplyOrder(IQueryable<Book> data, Order order)
+  {
+    if (order == null) throw new ArgumentNullException(nameof(order));
+    if (order.PropertyName == nameof(BookViewModel.Display))
+    {
+      return order.Direction == OrderDirection.Ascending ?
+        data.OrderBy(book => book.Author).ThenBy(book => book.Title) :
+        data.OrderByDescending(book => book.Author).ThenByDescending(book => book.Title);
+    }
+    
+    return base.ApplyOrder(data, order);
 }
 ```
+
 and then register it:
 ```c#
 .WithDataSource(DbLinq.Objects<Book>(), data => data
           .WithFilter(new BookFilter()))
 ```
+
+Remember - you don't need need to make your custom properties filterable and/or sortable. For example, you can make it filterable (and override `ApplyFilter` to support that), but not sortable (and skip overriding `ApplyOrder`).
 
 ### Custom converter
 Sometimes, you want to control the creation of row view-models. You can do that with `WithConverter` method.
@@ -144,7 +160,6 @@ this.DataTable = new DataTableBuilder<BookViewModel>()
                   .Filterable()
                   .DisplayName("no. "))
               .AddColumn(b => b.Display, column => column
-                  .Sortable()
                   .Filterable()
                   .DisplayName("Author&Title"))
       )
