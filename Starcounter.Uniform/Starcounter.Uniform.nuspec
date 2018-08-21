@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/Starcounter/Starcounter.Uniform</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Helper library for server-side part of uniform components.</description>
-    <releaseNotes>Made method to reload rows accessible.</releaseNotes>
+    <releaseNotes>Added feature for filtering by boolean value.</releaseNotes>
     <copyright>Copyright 2018</copyright>
     <tags>Starcounter, Uniform</tags>
   </metadata>
