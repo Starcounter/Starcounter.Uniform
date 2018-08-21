@@ -97,9 +97,18 @@ namespace Starcounter.Uniform.Tests.Queryables
         }
 
         [Test]
+        public void ApplyBooleanFilterShouldReturnProperRowDatas()
+        {
+            var boolFilter = new Filter { PropertyName = "Flag", Value = "true" };
+            var returnedData = ApplyFilteringOrdering(new[] { boolFilter });
+
+            returnedData.Should().ContainSingle().Which.Name.Should().Be("Tom");
+        }
+
+        [Test]
         public void ApplyIncorrectTypeFilterShouldReturnEmptyRowDatas()
         {
-            var flagFilter = new Filter { PropertyName = "Flag", Value = "true" };
+            var flagFilter = new Filter { PropertyName = "Flag", Value = "something" };
             var returnedData = ApplyFilteringOrdering(new[] { flagFilter });
 
             returnedData.Should().BeEmpty();

@@ -58,7 +58,7 @@ namespace Starcounter.Uniform.Queryables
             var parameterExpression = Expression.Parameter(typeof(TData), "x");
             var propertyExpression = Expression.Property(parameterExpression, propertyInfo);
 
-            var filterMethodExp = GetFilterMethodCallExpression(propertyInfo.PropertyType, propertyExpression, filter.Value);
+            var filterMethodExp = GetFilterMethodExpression(propertyInfo.PropertyType, propertyExpression, filter.Value);
             if (filterMethodExp != null)
             {
                 var lambda = Expression.Lambda<Func<TData, bool>>(filterMethodExp, parameterExpression);
@@ -104,12 +104,19 @@ namespace Starcounter.Uniform.Queryables
                     });
         }
 
-        private static MethodCallExpression GetFilterMethodCallExpression(Type keyType, MemberExpression propertyExpression, string filterValue)
+        private static Expression GetFilterMethodExpression(Type keyType, MemberExpression propertyExpression, string filterValue)
         {
             if (keyType == typeof(string))
             {
                 var method = typeof(string).GetMethod(nameof(string.Contains));
                 return Expression.Call(propertyExpression, method, Expression.Constant(filterValue));
+            }
+
+            if (keyType == typeof(bool))
+            {
+                var isFilterVauleABool = bool.TryParse(filterValue, out var boolFilterValue);
+
+                return isFilterVauleABool ? Expression.Equal(propertyExpression, Expression.Constant(boolFilterValue)) : null;
             }
             else
             {
