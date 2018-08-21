@@ -114,6 +114,20 @@ namespace Starcounter.Uniform.Tests.ViewModels
         }
 
         [Test]
+        public void AfterCallingFilterHandleWithEmptyValueForAlreadyExistingFilterFilterShouldBeRemoved()
+        {
+            _dataTableColumns.Add(new DataTableColumn { PropertyName = _columnPropertyName });
+            var filter = new Filter { PropertyName = _columnPropertyName, Value = "Ann" };
+            InitSut();
+            _dataProviderMock.Object.FilterOrderConfiguration.Filters.Add(filter);
+            var firstNameColumn = _sut.Columns.First(x => x.PropertyName == _columnPropertyName);
+
+            firstNameColumn.Handle(new UniDataTable.ColumnsViewModel.Input.Filter { Value = "" });
+            _dataProviderMock.Object.FilterOrderConfiguration.Filters.Should()
+                .NotContain(x => x.PropertyName == _columnPropertyName);
+        }
+
+        [Test]
         public void AfterCallingFilterHandleForAlreadyExistingFilterFilterValueShouldChange()
         {
             var expectedFilterValue = "John";

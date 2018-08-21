@@ -125,7 +125,14 @@ namespace Starcounter.Uniform.ViewModels
                         x.PropertyName == this.PropertyName);
                 if (filter != null)
                 {
-                    filter.Value = action.Value;
+                    if (!string.IsNullOrEmpty(action.Value))
+                    {
+                        filter.Value = action.Value;
+                    }
+                    else
+                    {
+                        DataProvider.FilterOrderConfiguration.Filters.Remove(filter);
+                    }
                 }
                 else
                 {
