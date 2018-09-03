@@ -112,6 +112,7 @@ public class BookFilter : QueryableFilter<Book>
     }
     
     return base.ApplyOrder(data, order);
+  }
 }
 ```
 
