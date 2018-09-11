@@ -10,19 +10,20 @@ namespace Starcounter.Uniform.Tests.Queryables
     public class QueryableFilterTests
     {
         private QueryableFilter<RowDataModel> _sut;
-        private IQueryable<RowDataModel> _rowDataModels = new List<RowDataModel>
-        {
-            new RowDataModel {Name = "Tom", Number = 0, Flag = true},
-            new RowDataModel {Name = "Ann", Number = 2, Flag = false},
-            new RowDataModel {Name = "Clark", Number = 1},
-            new RowDataModel {Name = "Amanda", Number = 3},
-            new RowDataModel {Name = "Abi", Number = 4}
-        }.AsQueryable();
+        private IQueryable<RowDataModel> _rowDataModels;
 
         [SetUp]
         public void SetUp()
         {
             _sut = new QueryableFilter<RowDataModel>();
+            _rowDataModels = new List<RowDataModel>
+            {
+                new RowDataModel {Name = "Tom", Number = 0, Flag = true},
+                new RowDataModel {Name = "Ann", Number = 2, Flag = false},
+                new RowDataModel {Name = "Clark", Number = 1},
+                new RowDataModel {Name = "Amanda", Number = 3},
+                new RowDataModel {Name = "Abi", Number = 4}
+            }.AsQueryable();
         }
 
         private IQueryable<RowDataModel> ApplyFilteringOrdering(IEnumerable<Filter> filters = null, IEnumerable<Order> orderings = null)
