@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Starcounter.Uniform.Generic.Pagination
 {
@@ -6,7 +7,7 @@ namespace Starcounter.Uniform.Generic.Pagination
     /// Consumed by pagination controls
     /// </summary>
     /// <typeparam name="TViewModel"></typeparam>
-    public interface IPaginatedDataProvider<out TViewModel>
+    public interface IPaginatedDataProvider<out TViewModel>: IDisposable
     {
         /// <summary>
         /// Set it, or change its properties to change the value of <see cref="CurrentPageRows"/>

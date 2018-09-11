@@ -11,8 +11,11 @@ namespace Starcounter.Uniform.ViewModels
     {
         public IFilteredDataProvider<Json> DataProvider { get; set; }
 
+        private bool _isDisposed = false;
+
         public UniDataTable Init(IFilteredDataProvider<Json> dataProvider, IEnumerable<DataTableColumn> sourceColumns, int initialPageSize, int initialPageIndex)
         {
+            CheckDisposed();
             this.DataProvider = dataProvider;
 
             Pagination.DataProvider = dataProvider;
@@ -34,6 +37,7 @@ namespace Starcounter.Uniform.ViewModels
         /// </summary>
         public void LoadRows()
         {
+            CheckDisposed();
             var page = this.DataProvider.PaginationConfiguration.CurrentPageIndex;
             if (page > 0)
             {
@@ -54,6 +58,29 @@ namespace Starcounter.Uniform.ViewModels
             this.Pages.Insert(page, newRowsData);
 
             this.TotalRows = this.DataProvider.TotalRows;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (_isDisposed)
+            {
+                return;
+            }
+            if (disposing)
+            {
+                DataProvider?.Dispose();
+                _isDisposed = true;
+            }
+
+            base.Dispose(disposing);
+        }
+
+        private void CheckDisposed()
+        {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException(GetType().FullName);
+            }
         }
 
         private void LoadRowsFromFirstPage()

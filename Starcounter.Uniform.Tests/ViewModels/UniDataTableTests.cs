@@ -231,5 +231,15 @@ namespace Starcounter.Uniform.Tests.ViewModels
             firstNameColumn.Handle(new UniDataTable.ColumnsViewModel.Input.Filter { Value = filterValue });
             _sut.Pages.Should().ContainSingle().Which.Rows.Should().ContainSingle(x => x == annRowModel);
         }
+
+        [Test]
+        public void AfterDisposingDataProviderShouldBeDisposed()
+        {
+            InitSut();
+
+            _sut.Dispose();
+
+            _dataProviderMock.Verify(provider => provider.Dispose());
+        }
     }
 }

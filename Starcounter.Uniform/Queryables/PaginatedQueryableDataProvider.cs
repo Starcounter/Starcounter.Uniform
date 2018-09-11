@@ -11,12 +11,14 @@ namespace Starcounter.Uniform.Queryables
     /// </summary>
     /// <typeparam name="TData"></typeparam>
     /// <typeparam name="TViewModel"></typeparam>
-    public class PaginatedQueryableDataProvider<TData, TViewModel> : IPaginatedDataProvider<TViewModel>
+    public sealed class PaginatedQueryableDataProvider<TData, TViewModel> : IPaginatedDataProvider<TViewModel>
         where TViewModel : Json, new()
     {
         private readonly IQueryable<TData> _queryable;
         private readonly Converter<TData, TViewModel> _converter;
         private readonly IQueryablePaginator<TData, TViewModel> _paginator;
+        private IReadOnlyCollection<TViewModel> _currentRows;
+        private bool _isDisposed;
 
         public PaginatedQueryableDataProvider(
             IQueryable<TData> queryable,
@@ -30,9 +32,46 @@ namespace Starcounter.Uniform.Queryables
 
         public PaginationConfiguration PaginationConfiguration { get; set; }
 
-        public IReadOnlyCollection<TViewModel> CurrentPageRows =>
-            _paginator.GetRows(_queryable, PaginationConfiguration, _converter);
-
+        public IReadOnlyCollection<TViewModel> CurrentPageRows
+        {
+            get
+            {
+                CheckDisposed();
+                DisposeOfRows();
+                _currentRows = _paginator.GetRows(_queryable, PaginationConfiguration, _converter);
+                return _currentRows;
+            }
+        }
         public int TotalRows => _paginator.GetTotalRows(_queryable);
+
+        public void Dispose()
+        {
+            if (_isDisposed)
+            {
+                return;
+            }
+            DisposeOfRows();
+            _isDisposed = true;
+        }
+
+        private void CheckDisposed()
+        {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException(GetType().FullName);
+            }
+        }
+
+        private void DisposeOfRows()
+        {
+            if (_currentRows != null)
+            {
+                foreach (var currentRow in _currentRows)
+                {
+                    // todo should I keep where clause
+                    currentRow.Dispose();
+                }
+            }
+        }
     }
 }
