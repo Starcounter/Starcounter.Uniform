@@ -196,6 +196,10 @@ public class BookFilter : QueryableFilter<Book>
 }
 ```
 
+### Disposing of row view-models
+
+Row view-models (like `BookViewModel` in the example above) derive from `Json` which means they all implement `IDisposable`. Whenever the rows are refreshed, the old rows collection is disposed - i.e. all the row view-models have their `Dispose` method called. When the `UniDataTable` is disposed, all of its current row view-models have their `Dispose` method called
+
 ## Uni-form-item & uni-form-item-group
 `uni-form-item` decorates an optional native `<label>`, any native or custom form control element, and an optional `<output>` message as form item. `uni-form-item-group` groups multiple `uni-form-item` elements into one form group with separate label and message.
 
