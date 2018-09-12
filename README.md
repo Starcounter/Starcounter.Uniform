@@ -4,7 +4,7 @@ Starcounter.Uniform is a library that provides server-side helpers for using and
 It is available for downloading as [Starcounter.Uniform](https://www.nuget.org/packages/Starcounter.Uniform/) NuGet package.
 
 ## Requirements
-Requires Starcounter 2.4.0.6535 or later and .NET Framework 4.6.1.
+Requires Starcounter 2.4.0.6721 or later and .NET Framework 4.6.1.
 
 ## How to use
 In your Starcounter app project, install Starcounter.Uniform with NuGet: `Install-Package Starcounter.Uniform`.
