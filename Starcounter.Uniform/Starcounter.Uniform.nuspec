@@ -10,7 +10,8 @@
     <projectUrl>https://github.com/Starcounter/Starcounter.Uniform</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Helper library for server-side part of uniform components.</description>
-    <releaseNotes>Added feature for filtering by boolean value.</releaseNotes>
+    <releaseNotes>UniDataTable now disposes of old row view-models, either when it's disposed or when the rows are no longer used.
+      Breaking change: row view models now need to derive from Json, requires SC 2.4.0.6721 or later</releaseNotes>
     <copyright>Copyright 2018</copyright>
     <tags>Starcounter, Uniform</tags>
   </metadata>

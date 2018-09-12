@@ -13,17 +13,18 @@ namespace Starcounter.Uniform.Queryables
     /// </summary>
     /// <typeparam name="TViewModel"></typeparam>
     /// <typeparam name="TData"></typeparam>
-    public class FilteredPaginatedDataProvider<TData, TViewModel> : IFilteredDataProvider<TViewModel>
+    public sealed class FilteredPaginatedDataProvider<TData, TViewModel> : IFilteredDataProvider<TViewModel>
+        where TViewModel: Json
     {
         private readonly IQueryableFilter<TData> _filter;
         private readonly IQueryablePaginator<TData, TViewModel> _paginator;
 
         private readonly IQueryable<TData> _dataSource;
 
-        // todo: I don't like having this here. I'd like it better to be overridden like ApplyFilter in SorterFilter
         private readonly Converter<TData, TViewModel> _converter;
         private IReadOnlyCollection<TViewModel> _currentPageRows;
-        private int _totalRows;
+        private bool _isDisposed = false;
+        private IQueryable<TData> _filteredData;
 
         public FilteredPaginatedDataProvider(IQueryableFilter<TData> filter,
             IQueryablePaginator<TData, TViewModel> paginator,
@@ -36,34 +37,72 @@ namespace Starcounter.Uniform.Queryables
             _converter = converter;
         }
 
+        /// <inheritdoc />
         public PaginationConfiguration PaginationConfiguration { get; set; }
 
+        /// <inheritdoc />
         public FilterOrderConfiguration FilterOrderConfiguration { get; set; }
 
-        // TODO: Reload rows should be called only after pagination or filter has been changed
+        // TODO: _paginator should be called only after pagination or filter has been changed
+        /// <inheritdoc />
         public IReadOnlyCollection<TViewModel> CurrentPageRows
         {
             get
             {
-                ReloadRows();
+                CheckDisposed();
+                ApplyFilters();
+                DisposeOfRows();
+                _currentPageRows = _paginator.GetRows(_filteredData, PaginationConfiguration, _converter);
                 return _currentPageRows;
             }
         }
 
+        /// <inheritdoc />
         public int TotalRows
         {
             get
             {
-                ReloadRows();
-                return _totalRows;
+                CheckDisposed();
+                ApplyFilters();
+                return _paginator.GetTotalRows(_filteredData);
             }
         }
 
-        private void ReloadRows()
+        /// <summary>
+        /// Calls <see cref="IDisposable.Dispose"/> on all of currently held rows that implement <see cref="IDisposable"/>
+        /// </summary>
+        public void Dispose()
         {
-            var filteredData = _filter.Apply(_dataSource, FilterOrderConfiguration);
-            _currentPageRows = _paginator.GetRows(filteredData, PaginationConfiguration, _converter);
-            _totalRows = _paginator.GetTotalRows(filteredData);
+            if (_isDisposed)
+            {
+                return;
+            }
+            DisposeOfRows();
+            _isDisposed = true;
+        }
+
+        private void ApplyFilters()
+        {
+            _filteredData = _filter.Apply(_dataSource, FilterOrderConfiguration);
+        }
+
+        private void DisposeOfRows()
+        {
+            if (_currentPageRows != null)
+            {
+                foreach (var currentPageRow in _currentPageRows)
+                {
+                    currentPageRow.Dispose();
+                }
+            }
+        }
+
+        private void CheckDisposed()
+        {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException(GetType().FullName);
+            }
         }
     }
 }
