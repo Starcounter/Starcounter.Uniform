@@ -1,14 +1,37 @@
 # Starcounter.Uniform
 Starcounter.Uniform is a library that provides server-side helpers for using and managing uniform components. 
 
-It is available for downloading as [Starcounter.Uniform](https://www.nuget.org/packages/Starcounter.Uniform/) NuGet package.
+## Table of contents
+
+- [Requirements](#requirements)
+- [How to use](#how-to-use)
+- [Uni-data-table](#uni-data-table)
+  * [Basic usage](#basic-usage)
+  * [DataTableBuilder](#datatablebuilder)
+  * [Computed columns](#computed-columns)
+  * [Custom converter](#custom-converter)
+  * [Example implementation](#example-implementation)
+  * [Disposing of row view-models](#disposing-of-row-view-models)
+- [Uni-form-item & uni-form-item-group](#uni-form-item--uni-form-item-group)
+  * [FormItemMessagesBuilder](#formitemmessagesbuilder)
+  * [FormItemMetadata](#formitemmetadata)
+  * [Example usage](#example-usage)
+- [History](#history)
+- [License](#license)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
+## Installation
+[This package is available on nuget](https://www.nuget.org/packages/Starcounter.Uniform/). You can get it there. To install with CLI run:
+
+```
+Install-Package Starcounter.Uniform
+```
 
 ## Requirements
 Requires Starcounter 2.4.0.6721 or later and .NET Framework 4.6.1.
 
 ## How to use
-In your Starcounter app project, install Starcounter.Uniform with NuGet: `Install-Package Starcounter.Uniform`.
-
 This library provides helping method for a variety of uniform components and way to use it is slightly different for each one of them.
 
 ## Uni-data-table
