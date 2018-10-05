@@ -72,18 +72,13 @@ namespace Starcounter.Uniform.Tests.Queryables
         {
         }
 
-        private class DisposableViewModel : Json
+        private class DisposableViewModel : Json, IDisposable
         {
             public bool Disposed { get; private set; }
 
-            protected override void Dispose(bool disposing)
+            public void Dispose()
             {
-                if (disposing)
-                {
-                    Disposed = true;
-                }
-
-                base.Dispose(disposing);
+               Disposed = true;
             }
         }
     }

@@ -92,7 +92,7 @@ namespace Starcounter.Uniform.Queryables
             {
                 foreach (var currentPageRow in _currentPageRows)
                 {
-                    currentPageRow.Dispose();
+                    (currentPageRow as IDisposable)?.Dispose();
                 }
             }
         }
