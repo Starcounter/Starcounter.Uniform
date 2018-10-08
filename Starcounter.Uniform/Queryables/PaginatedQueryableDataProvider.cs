@@ -68,8 +68,7 @@ namespace Starcounter.Uniform.Queryables
             {
                 foreach (var currentRow in _currentRows)
                 {
-                    // todo should I keep where clause
-                    currentRow.Dispose();
+                    (currentRow as IDisposable)?.Dispose();
                 }
             }
         }

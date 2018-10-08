@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Starcounter.Uniform.ViewModels
 {
-    public partial class UniDataTable : Json
+    public sealed partial class UniDataTable : Json
     {
         public IFilteredDataProvider<Json> DataProvider { get; set; }
 
@@ -60,19 +60,14 @@ namespace Starcounter.Uniform.ViewModels
             this.TotalRows = this.DataProvider.TotalRows;
         }
 
-        protected override void Dispose(bool disposing)
+        public void Dispose()
         {
             if (_isDisposed)
             {
                 return;
             }
-            if (disposing)
-            {
-                DataProvider?.Dispose();
-                _isDisposed = true;
-            }
-
-            base.Dispose(disposing);
+            DataProvider?.Dispose();
+            _isDisposed = true;
         }
 
         private void CheckDisposed()
