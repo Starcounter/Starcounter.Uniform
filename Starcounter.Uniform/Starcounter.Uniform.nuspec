@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/Starcounter/Starcounter.Uniform</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Helper library for server-side part of uniform components.</description>
-    <releaseNotes>Compatible with SC 2.4.0.6825: Json class is no longer IDisposable. To add resource release, implement IDisposable in your row view-models</releaseNotes>
+    <releaseNotes>Fixed compatibility with SC (bug #17)</releaseNotes>
     <copyright>Copyright 2018</copyright>
     <tags>Starcounter, Uniform</tags>
   </metadata>
