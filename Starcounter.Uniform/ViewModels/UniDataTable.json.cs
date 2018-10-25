@@ -105,9 +105,10 @@ namespace Starcounter.Uniform.ViewModels
             public Action LoadRows { get; set; }
             public Action LoadRowsFromFirstPage { get; set; }
 
-            public int PageSize => DataProvider.PaginationConfiguration.PageSize;
+            public int PageSize => DataProvider?.PaginationConfiguration.PageSize ?? 0;
 
-            public int PagesCount => (DataProvider.TotalRows + DataProvider.PaginationConfiguration.PageSize - 1) / DataProvider.PaginationConfiguration.PageSize;
+            public int PagesCount => (DataProvider?.TotalRows + DataProvider?.PaginationConfiguration.PageSize - 1) /
+                                     DataProvider?.PaginationConfiguration.PageSize ?? 0;
 
             public void Handle(Input.CurrentPageIndex action)
             {
