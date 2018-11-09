@@ -61,7 +61,7 @@ namespace Starcounter.Uniform.ViewModels
             }
             else
             {
-                this.Pages.Insert(page, newRowsData);
+                this.Pages.Add(newRowsData);
             }
 
             this.TotalRows = this.DataProvider.TotalRows;
