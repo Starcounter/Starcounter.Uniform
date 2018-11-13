@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/Starcounter/Starcounter.Uniform</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Helper library for server-side part of uniform components.</description>
-    <releaseNotes>Added null checks in dataProvider</releaseNotes>
+    <releaseNotes>Fixed bug with generating multiple pages instead of rows.</releaseNotes>
     <copyright>Copyright 2018</copyright>
     <tags>Starcounter, Uniform</tags>
   </metadata>
