@@ -44,8 +44,8 @@
     <Reference Include="Starcounter, Version=2.0.0.0, Culture=neutral, PublicKeyToken=d2df1e81d0ca3abf" />
     <Reference Include="Starcounter.Internal, Version=2.0.0.0, Culture=neutral, PublicKeyToken=d2df1e81d0ca3abf" />
     <Reference Include="Starcounter.Hosting, Version=2.0.0.0, Culture=neutral, PublicKeyToken=d2df1e81d0ca3abf" />
-    <Reference Include="Starcounter.Linq, Version=2.0.3.0, Culture=neutral, processorArchitecture=AMD64">
-      <HintPath>$(SolutionDir)\UniformDocs\packages\Starcounter.Linq.2.0.3\lib\net461\Starcounter.Linq.dll</HintPath>
+    <Reference Include="Starcounter.Linq, Version=2.3.3.0, Culture=neutral, processorArchitecture=AMD64">
+      <HintPath>..\packages\Starcounter.Linq.2.3.3\lib\net461\Starcounter.Linq.dll</HintPath>
     </Reference>
     <Reference Include="Starcounter.XSON, Version=2.0.0.0, Culture=neutral, PublicKeyToken=d2df1e81d0ca3abf" />
     <Reference Include="System" />
