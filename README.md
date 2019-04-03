@@ -118,7 +118,9 @@ public class BookFilter : QueryableFilter<Book>
     if (filter == null) throw new ArgumentNullException(nameof(filter));
     if (filter.PropertyName == nameof(BookViewModel.Display))
     {
-        return data.Where(book => book.Author == filter.Value || book.Title == filter.Value);
+        // We used string.Compare method to ignore diacritics in the strings.
+        return data.Where(book => string.Compare(book.Author, filter.Value, CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace) == 0
+                                || string.Compare(book.Title, filter.Value, CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace) == 0);
     }
 
     return base.ApplyFilter(data, filter);
