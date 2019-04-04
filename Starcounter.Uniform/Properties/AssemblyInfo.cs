@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Starcounter")]
 [assembly: AssemblyProduct("Starcounter.Uniform")]
-[assembly: AssemblyCopyright("Copyright © Starcounter 2013")]
+[assembly: AssemblyCopyright("Copyright © Starcounter 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,8 +32,8 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2.3.0")]
-[assembly: AssemblyFileVersion("2.3.0")]
+[assembly: AssemblyVersion("2.4.0")]
+[assembly: AssemblyFileVersion("2.4.0")]
 
 // Assures the current assembly has a reference to the Starcounter
 // assembly. A reference to Starcounter is currently required for
