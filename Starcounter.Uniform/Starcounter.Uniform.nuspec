@@ -10,8 +10,8 @@
     <projectUrl>https://github.com/Starcounter/Starcounter.Uniform</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Helper library for server-side part of uniform components.</description>
-    <releaseNotes>Fixed bug with generating multiple pages instead of rows.</releaseNotes>
-    <copyright>Copyright 2018</copyright>
+    <releaseNotes>Update and upgrade NuGet packages.</releaseNotes>
+    <copyright>Copyright 2019</copyright>
     <tags>Starcounter, Uniform</tags>
   </metadata>
 </package>
