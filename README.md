@@ -29,7 +29,7 @@ Install-Package Starcounter.Uniform
 ```
 
 ## Requirements
-Requires Starcounter 2.4.0.6721 or later and .NET Framework 4.6.1.
+Requires Starcounter 2.4.0.7243 or later and .NET Framework 4.6.1.
 
 ## How to use
 This library provides helping method for a variety of uniform components and way to use it is slightly different for each one of them.
