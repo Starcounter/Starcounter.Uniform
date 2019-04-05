@@ -102,6 +102,22 @@ namespace Starcounter.Uniform.Tests.ViewModels
         }
 
         [Test]
+        public void AfterCallingDeleteRowMethodRowShouldBeRemovedFromTheTable()
+        {
+            var rowToDelete = new RowViewModel { Name = "Clark" };
+            _returnedRowsFunc = () => new List<RowViewModel>
+            {
+                rowToDelete,
+                new RowViewModel {Name = "Ann"}
+            };
+            InitSut();
+            var totalRows = _sut.TotalRows;
+            _sut.DeleteRow(rowToDelete);
+            _sut.TotalRows.Should().BeLessThan(totalRows);
+            _sut.Pages[0].Rows.Should().NotContain(rowToDelete);
+        }
+
+        [Test]
         public void AfterCallingCurrentPageIndexHandleWitPageIndexLowerThanZeroZeroShouldBeSetInstead()
         {
             var wrongIndex = -1;

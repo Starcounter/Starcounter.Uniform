@@ -67,6 +67,22 @@ namespace Starcounter.Uniform.ViewModels
             this.TotalRows = this.DataProvider.TotalRows;
         }
 
+        /// <summary>
+        /// Deletes a row from the table along with it's database representation.
+        /// </summary>
+        public void DeleteRow(Json rowToDelete)
+        {
+            foreach (var pagesViewModel in this.Pages)
+            {
+                if (pagesViewModel.Rows.Contains(rowToDelete))
+                {
+                    pagesViewModel.Rows.Remove(rowToDelete);
+                }
+            }
+
+            rowToDelete.Data.Delete();
+        }
+
         public void Dispose()
         {
             if (_isDisposed)
