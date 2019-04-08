@@ -145,8 +145,29 @@ namespace Starcounter.Uniform.ViewModels
         [UniDataTable_json.Columns]
         public partial class ColumnsViewModel : Json, IBound<DataTableColumn>
         {
+            private string _sortValue = null;
+
             public IFilteredDataProvider<Json> DataProvider { get; set; }
             public Action LoadRowsFromFirstPage { get; set; }
+
+            /// <summary>
+            /// Empty string is also a "value" on the client side, which results into invalid HTML attribute:
+            /// <uni-data-table-sorter direction>
+            /// While only
+            /// <uni-data-table-sorter direction="asc"> or <uni-data-table-sorter direction="desc">
+            /// Are valid.
+            /// </summary>
+            public string Sort
+            {
+                get
+                {
+                    return _sortValue;
+                }
+                set
+                {
+                    _sortValue = string.IsNullOrWhiteSpace(value) ? null : value;
+                }
+            }
 
             public void Handle(Input.Filter action)
             {
