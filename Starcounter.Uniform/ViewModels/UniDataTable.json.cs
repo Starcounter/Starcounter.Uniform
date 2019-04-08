@@ -9,6 +9,9 @@ namespace Starcounter.Uniform.ViewModels
 {
     public sealed partial class UniDataTable : Json
     {
+        public const string SortAscendingString = "asc";
+        public const string SortDescendingString = "desc";
+
         public IFilteredDataProvider<Json> DataProvider { get; set; }
 
         private bool _isDisposed = false;
@@ -145,9 +148,6 @@ namespace Starcounter.Uniform.ViewModels
             public IFilteredDataProvider<Json> DataProvider { get; set; }
             public Action LoadRowsFromFirstPage { get; set; }
 
-            private static string Descending => "desc";
-            private static string Ascending => "asc";
-
             public void Handle(Input.Filter action)
             {
                 var filter =
@@ -178,40 +178,46 @@ namespace Starcounter.Uniform.ViewModels
 
             public void Handle(Input.Sort action)
             {
-                if (action.Value != Ascending && action.Value != Descending && !string.IsNullOrEmpty(action.Value))
+                OrderDirection? direction = ParseOrderDirection(action.Value);
+                Order order = this.DataProvider.FilterOrderConfiguration.Ordering.FirstOrDefault(x => x.PropertyName == this.PropertyName);
+
+                if (!direction.HasValue)
                 {
+                    if (order != null)
+                    {
+                        this.DataProvider.FilterOrderConfiguration.Ordering.Remove(order);
+                    }
+
                     return;
                 }
 
-                var order =
-                    DataProvider.FilterOrderConfiguration.Ordering.FirstOrDefault(x =>
-                        x.PropertyName == this.PropertyName);
-                if (order != null)
+                if (order == null)
                 {
-                    if (!string.IsNullOrEmpty(action.Value))
+                    order = new Order()
                     {
-                        order.Direction = ParseOrderDirection(action.Value);
-                    }
-                    else
-                    {
-                        DataProvider.FilterOrderConfiguration.Ordering.Remove(order);
-                    }
+                        PropertyName = this.PropertyName
+                    };
+
+                    this.DataProvider.FilterOrderConfiguration.Ordering.Add(order);
                 }
-                else
-                {
-                    DataProvider.FilterOrderConfiguration.Ordering.Add(new Order
-                    {
-                        PropertyName = this.PropertyName,
-                        Direction = ParseOrderDirection(action.Value)
-                    });
-                }
+
+                order.Direction = direction.Value;
 
                 LoadRowsFromFirstPage?.Invoke();
             }
 
-            private static OrderDirection ParseOrderDirection(string orderString)
+            private static OrderDirection? ParseOrderDirection(string orderString)
             {
-                return orderString == Ascending ? OrderDirection.Ascending : OrderDirection.Descending;
+                if (UniDataTable.SortAscendingString.Equals(orderString, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return OrderDirection.Ascending;
+                }
+                else if (UniDataTable.SortDescendingString.Equals(orderString, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return OrderDirection.Descending;
+                }
+
+                return null;
             }
         }
 
