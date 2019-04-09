@@ -80,9 +80,9 @@ namespace Starcounter.Uniform.ViewModels
                 }
             }
 
-            this.Pagination.TemporaryPageSize = this.Pagination.TemporaryPageSize == 0
-                ? this.DataProvider.PaginationConfiguration.PageSize - 1
-                : this.Pagination.TemporaryPageSize - 1;
+            rowToDelete.Data.Delete();
+
+            this.TotalRows = this.DataProvider.TotalRows;
         }
 
         public void Dispose()
@@ -132,8 +132,7 @@ namespace Starcounter.Uniform.ViewModels
             public int TemporaryPageSize { get; set; }
             public int PageSize => TemporaryPageSize == 0 ? (DataProvider?.PaginationConfiguration.PageSize ?? 0) : TemporaryPageSize;
 
-            public int PagesCount => (DataProvider?.TotalRows + DataProvider?.PaginationConfiguration.PageSize - 1) /
-                                     DataProvider?.PaginationConfiguration.PageSize ?? 0;
+            public int PagesCount => ((int)Math.Ceiling((decimal)DataProvider?.TotalRows / (decimal)DataProvider?.PaginationConfiguration.PageSize));
 
             public void Handle(Input.CurrentPageIndex action)
             {
