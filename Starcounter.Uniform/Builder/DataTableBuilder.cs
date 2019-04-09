@@ -116,6 +116,5 @@ namespace Starcounter.Uniform.Builder
 
             return new UniDataTable().Init(_dataProvider, _columns, _initialPageSize, _initialPageIndex);
         }
-
     }
 }
