@@ -110,10 +110,11 @@ namespace Starcounter.Uniform.Tests.ViewModels
                 rowToDelete,
                 new RowViewModel {Name = "Ann"}
             };
+
             InitSut();
-            var totalRows = _sut.TotalRows;
+
+            _sut.Pages[0].Rows.Should().Contain(rowToDelete);
             _sut.DeleteRow(rowToDelete);
-            _sut.TotalRows.Should().BeLessThan(totalRows);
             _sut.Pages[0].Rows.Should().NotContain(rowToDelete);
         }
 

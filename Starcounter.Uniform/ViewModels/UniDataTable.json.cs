@@ -68,7 +68,7 @@ namespace Starcounter.Uniform.ViewModels
         }
 
         /// <summary>
-        /// Deletes a row from the table along with it's database representation.
+        /// Deletes a row from the table.
         /// </summary>
         public void DeleteRow(Json rowToDelete)
         {
@@ -80,7 +80,9 @@ namespace Starcounter.Uniform.ViewModels
                 }
             }
 
-            rowToDelete.Data.Delete();
+            this.Pagination.TemporaryPageSize = this.Pagination.TemporaryPageSize == 0
+                ? this.DataProvider.PaginationConfiguration.PageSize - 1
+                : this.Pagination.TemporaryPageSize - 1;
         }
 
         public void Dispose()
@@ -127,8 +129,8 @@ namespace Starcounter.Uniform.ViewModels
             public IFilteredDataProvider<Json> DataProvider { get; set; }
             public Action LoadRows { get; set; }
             public Action LoadRowsFromFirstPage { get; set; }
-
-            public int PageSize => DataProvider?.PaginationConfiguration.PageSize ?? 0;
+            public int TemporaryPageSize { get; set; }
+            public int PageSize => TemporaryPageSize == 0 ? (DataProvider?.PaginationConfiguration.PageSize ?? 0) : TemporaryPageSize;
 
             public int PagesCount => (DataProvider?.TotalRows + DataProvider?.PaginationConfiguration.PageSize - 1) /
                                      DataProvider?.PaginationConfiguration.PageSize ?? 0;
@@ -144,6 +146,9 @@ namespace Starcounter.Uniform.ViewModels
                 {
                     DataProvider.PaginationConfiguration.CurrentPageIndex = newPageIndex > PagesCount ? PagesCount : newPageIndex;
                 }
+
+                // Reset temporary page size
+                TemporaryPageSize = 0;
 
                 LoadRows?.Invoke();
             }
