@@ -160,14 +160,8 @@ namespace Starcounter.Uniform.ViewModels
             /// </summary>
             public string Sort
             {
-                get
-                {
-                    return _sortValue;
-                }
-                set
-                {
-                    _sortValue = string.IsNullOrWhiteSpace(value) ? null : value;
-                }
+                get => _sortValue;
+                set => _sortValue = string.IsNullOrWhiteSpace(value) ? null : value;
             }
 
             public void Handle(Input.Filter action)
