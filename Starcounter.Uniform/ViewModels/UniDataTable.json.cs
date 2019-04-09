@@ -151,11 +151,12 @@ namespace Starcounter.Uniform.ViewModels
             public Action LoadRowsFromFirstPage { get; set; }
 
             /// <summary>
-            /// Empty string is also a "value" on the client side, which results into invalid HTML attribute:
-            /// <uni-data-table-sorter direction>
-            /// While only
-            /// <uni-data-table-sorter direction="asc"> or <uni-data-table-sorter direction="desc">
-            /// Are valid.
+            /// The <see cref="string.Empty"/> value is replaced with NULL, 
+            /// because empty string is also a "value" on the client side, which results into invalid HTML attribute:
+            /// &lt;uni-data-table-sorter direction>
+            /// while only
+            /// &lt;uni-data-table-sorter direction="asc"> or &lt;uni-data-table-sorter direction="desc">
+            /// are valid.
             /// </summary>
             public string Sort
             {
