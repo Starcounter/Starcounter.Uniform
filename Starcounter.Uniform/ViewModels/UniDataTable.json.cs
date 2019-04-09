@@ -9,6 +9,9 @@ namespace Starcounter.Uniform.ViewModels
 {
     public sealed partial class UniDataTable : Json
     {
+        public const string SortAscendingString = "asc";
+        public const string SortDescendingString = "desc";
+
         public IFilteredDataProvider<Json> DataProvider { get; set; }
 
         private bool _isDisposed = false;
@@ -142,11 +145,24 @@ namespace Starcounter.Uniform.ViewModels
         [UniDataTable_json.Columns]
         public partial class ColumnsViewModel : Json, IBound<DataTableColumn>
         {
+            private string _sortValue = null;
+
             public IFilteredDataProvider<Json> DataProvider { get; set; }
             public Action LoadRowsFromFirstPage { get; set; }
 
-            private static string Descending => "desc";
-            private static string Ascending => "asc";
+            /// <summary>
+            /// The <see cref="string.Empty"/> value is replaced with NULL, 
+            /// because empty string is also a "value" on the client side, which results into invalid HTML attribute:
+            /// &lt;uni-data-table-sorter direction>
+            /// while only
+            /// &lt;uni-data-table-sorter direction="asc"> or &lt;uni-data-table-sorter direction="desc">
+            /// are valid.
+            /// </summary>
+            public string Sort
+            {
+                get => _sortValue;
+                set => _sortValue = string.IsNullOrWhiteSpace(value) ? null : value;
+            }
 
             public void Handle(Input.Filter action)
             {
@@ -178,40 +194,46 @@ namespace Starcounter.Uniform.ViewModels
 
             public void Handle(Input.Sort action)
             {
-                if (action.Value != Ascending && action.Value != Descending && !string.IsNullOrEmpty(action.Value))
+                OrderDirection? direction = ParseOrderDirection(action.Value);
+                Order order = this.DataProvider.FilterOrderConfiguration.Ordering.FirstOrDefault(x => x.PropertyName == this.PropertyName);
+
+                if (!direction.HasValue)
                 {
+                    if (order != null)
+                    {
+                        this.DataProvider.FilterOrderConfiguration.Ordering.Remove(order);
+                    }
+
                     return;
                 }
 
-                var order =
-                    DataProvider.FilterOrderConfiguration.Ordering.FirstOrDefault(x =>
-                        x.PropertyName == this.PropertyName);
-                if (order != null)
+                if (order == null)
                 {
-                    if (!string.IsNullOrEmpty(action.Value))
+                    order = new Order()
                     {
-                        order.Direction = ParseOrderDirection(action.Value);
-                    }
-                    else
-                    {
-                        DataProvider.FilterOrderConfiguration.Ordering.Remove(order);
-                    }
+                        PropertyName = this.PropertyName
+                    };
+
+                    this.DataProvider.FilterOrderConfiguration.Ordering.Add(order);
                 }
-                else
-                {
-                    DataProvider.FilterOrderConfiguration.Ordering.Add(new Order
-                    {
-                        PropertyName = this.PropertyName,
-                        Direction = ParseOrderDirection(action.Value)
-                    });
-                }
+
+                order.Direction = direction.Value;
 
                 LoadRowsFromFirstPage?.Invoke();
             }
 
-            private static OrderDirection ParseOrderDirection(string orderString)
+            private static OrderDirection? ParseOrderDirection(string orderString)
             {
-                return orderString == Ascending ? OrderDirection.Ascending : OrderDirection.Descending;
+                if (UniDataTable.SortAscendingString.Equals(orderString, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return OrderDirection.Ascending;
+                }
+                else if (UniDataTable.SortDescendingString.Equals(orderString, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return OrderDirection.Descending;
+                }
+
+                return null;
             }
         }
 
