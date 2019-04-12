@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/Starcounter/Starcounter.Uniform</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Helper library for server-side part of uniform components.</description>
-    <releaseNotes>Update and upgrade NuGet packages.</releaseNotes>
+    <releaseNotes>Fixed default column order by value and behavior.</releaseNotes>
     <copyright>Copyright 2019</copyright>
     <tags>Starcounter, Uniform</tags>
   </metadata>
