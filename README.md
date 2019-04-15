@@ -221,6 +221,57 @@ public class BookFilter : QueryableFilter<Book>
 }
 ```
 
+### Nested view-models
+
+`uni-data-table` is capable of handling view-models that are nested in the row view-model.
+
+```json
+{
+  "FirstName": "",
+  "Email": {
+    "Address$": ""
+  },
+}
+```
+
+
+To do so you have to register new column name for the nested property:
+
+```c#
+this.DataTable = new DataTablePage();
+dataTablePage.DataTable = new DataTableBuilder<DataTableRowViewModel>()
+    .WithDataSource(DbLinq.Objects<DataTableRowDataModel>())
+    .WithColumns(columns =>
+        columns
+            .AddColumn(b => b.FirstName, column => column.DisplayName("Name"))
+            .AddColumn(b => b.Email.Address, column => column.DisplayName("Email")))
+    .Build();
+```
+
+and then add custom column display in the client side implementation:
+
+```html
+<uni-data-table slot="uniformdocs/datatable-data-table"
+                            provider="{{model.DataTable}}" auto-pagination>
+                <uni-data-table-column index="2">
+                    <template slot="header">
+                        <uni-data-table-sorter direction="{{column.Sort$}}">
+                            Email
+                        </uni-data-table-sorter>
+                        <uni-data-table-filter value="{{column.Filter$}}">
+                        </uni-data-table-filter>
+                    </template>
+                    <template>
+                        <input type="email" value="{{item.Email.Address$::input}}" placeholder="Email">
+                    </template>
+                </uni-data-table-column>
+            </uni-data-table>
+```
+
+More about custom deifinition of the table columns you can find in the [`uni-data-table` CE documentation](https://github.com/Starcounter/uniform/tree/master/components/uni-data-table)
+
+Note that for the filtering and sorting to work you will have to add custom implementation of the `QueryableFilter`. Example implementation of the custom filter and sorter you can find in the [Computed columns](https://github.com/Starcounter/Starcounter.Uniform#computed-columns) paragraph.
+
 ### Disposing of row view-models
 
 Row view-models (like `BookViewModel` in the example above) derive from `Json` which means they all implement `IDisposable`. Whenever the rows are refreshed, the old rows collection is disposed - i.e. all the row view-models have their `Dispose` method called. When the `UniDataTable` is disposed, all of its current row view-models have their `Dispose` method called
