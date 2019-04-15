@@ -45,7 +45,7 @@ namespace Starcounter.Uniform.Builder
                 throw new ArgumentException($"Expression '{propertySelector}' refers to a field, not a property.");
             }
 
-            if (viewModelType != propertyInfo.ReflectedType && !viewModelType.IsSubclassOf(propertyInfo.ReflectedType))
+            if (viewModelType != propertyInfo.ReflectedType && !viewModelType.IsSubclassOf(propertyInfo.ReflectedType) && propertyInfo?.DeclaringType?.DeclaringType != viewModelType)
             {
                 throw new ArgumentException($"Expression '{propertySelector}' refers to a property that is not from type {viewModelType}.");
             }
