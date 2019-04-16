@@ -119,7 +119,7 @@ public class BookFilter : QueryableFilter<Book>
     if (filter.PropertyName == nameof(BookViewModel.Display))
     {
         // We used string.Compare method to ignore diacritics in the strings.
-        return data.Where(book => string.Compare(book.Author, filter.Value, CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace) == 0
+        return data.ToList().Where(book => string.Compare(book.Author, filter.Value, CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace) == 0
                                 || string.Compare(book.Title, filter.Value, CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace) == 0);
     }
 
