@@ -11,6 +11,7 @@ Starcounter.Uniform is a library that provides server-side helpers for using and
   * [Computed columns](#computed-columns)
   * [Custom converter](#custom-converter)
   * [Example implementation](#example-implementation)
+  * [Nested view-models](#nested-view-models)
   * [Disposing of row view-models](#disposing-of-row-view-models)
 - [Uni-form-item & uni-form-item-group](#uni-form-item--uni-form-item-group)
   * [FormItemMessagesBuilder](#formitemmessagesbuilder)
@@ -251,24 +252,24 @@ dataTablePage.DataTable = new DataTableBuilder<DataTableRowViewModel>()
 and then add custom column display in the client side implementation:
 
 ```html
-<uni-data-table slot="uniformdocs/datatable-data-table"
-                            provider="{{model.DataTable}}" auto-pagination>
-                <uni-data-table-column index="2">
-                    <template slot="header">
-                        <uni-data-table-sorter direction="{{column.Sort$}}">
-                            Email
-                        </uni-data-table-sorter>
-                        <uni-data-table-filter value="{{column.Filter$}}">
-                        </uni-data-table-filter>
-                    </template>
-                    <template>
-                        <input type="email" value="{{item.Email.Address$::input}}" placeholder="Email">
-                    </template>
-                </uni-data-table-column>
-            </uni-data-table>
+ <uni-data-table slot="uniformdocs/datatable-data-table"
+                 provider="{{model.DataTable}}" auto-pagination>
+     <uni-data-table-column index="2">
+         <template slot="header">
+             <uni-data-table-sorter direction="{{column.Sort$}}">
+                 Email
+             </uni-data-table-sorter>
+             <uni-data-table-filter value="{{column.Filter$}}">
+             </uni-data-table-filter>
+         </template>
+         <template>
+             <input type="email" value="{{item.Email.Address$::input}}" placeholder="Email">
+         </template>
+     </uni-data-table-column>
+ </uni-data-table>
 ```
 
-More about custom deifinition of the table columns you can find in the [`uni-data-table` CE documentation](https://github.com/Starcounter/uniform/tree/master/components/uni-data-table)
+More about custom definition of the table columns you can find in the [`uni-data-table` CE documentation](https://github.com/Starcounter/uniform/tree/master/components/uni-data-table)
 
 Note that for the filtering and sorting to work you will have to add custom implementation of the `QueryableFilter`. Example implementation of the custom filter and sorter you can find in the [Computed columns](https://github.com/Starcounter/Starcounter.Uniform#computed-columns) paragraph.
 
