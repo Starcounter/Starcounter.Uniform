@@ -11,6 +11,7 @@ Starcounter.Uniform is a library that provides server-side helpers for using and
   * [Computed columns](#computed-columns)
   * [Custom converter](#custom-converter)
   * [Example implementation](#example-implementation)
+  * [Nested view-models](#nested-view-models)
   * [Disposing of row view-models](#disposing-of-row-view-models)
 - [Uni-form-item & uni-form-item-group](#uni-form-item--uni-form-item-group)
   * [FormItemMessagesBuilder](#formitemmessagesbuilder)
@@ -220,6 +221,43 @@ public class BookFilter : QueryableFilter<Book>
   }
 }
 ```
+
+### Nested view-models
+
+`uni-data-table` is capable of handling view-models that are nested in the row view-model.
+
+```json
+{
+  "FirstName": "",
+  "Email": {
+    "Address$": ""
+  },
+}
+```
+
+
+To do so you have to register new column name for the nested property:
+
+```c#
+this.DataTable = new DataTablePage();
+dataTablePage.DataTable = new DataTableBuilder<DataTableRowViewModel>()
+    .WithDataSource(DbLinq.Objects<DataTableRowDataModel>())
+    .WithColumns(columns =>
+        columns
+            .AddColumn(b => b.FirstName, column => column.DisplayName("Name"))
+            .AddColumn(b => b.Email.Address, column => column.DisplayName("Email")))
+    .Build();
+```
+
+and then add custom column display in the client side implementation with a proper reference to a nested property as a column value:
+
+```html
+<input type="email" value="{{item.Email.Address$::input}}" placeholder="Email">
+```
+
+More about custom definition of the table columns you can find in the [`uni-data-table` CE documentation](https://github.com/Starcounter/uniform/tree/master/components/uni-data-table)
+
+Note that for the filtering and sorting to work you will have to add custom implementation of the `QueryableFilter`. Example implementation of the custom filter and sorter you can find in the [Computed columns](https://github.com/Starcounter/Starcounter.Uniform#computed-columns) paragraph.
 
 ### Disposing of row view-models
 
