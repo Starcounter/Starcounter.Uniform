@@ -249,24 +249,10 @@ dataTablePage.DataTable = new DataTableBuilder<DataTableRowViewModel>()
     .Build();
 ```
 
-and then add custom column display in the client side implementation:
+and then add custom column display in the client side implementation with a proper reference to a nested property as a column value:
 
 ```html
- <uni-data-table slot="uniformdocs/datatable-data-table"
-                 provider="{{model.DataTable}}" auto-pagination>
-     <uni-data-table-column index="2">
-         <template slot="header">
-             <uni-data-table-sorter direction="{{column.Sort$}}">
-                 Email
-             </uni-data-table-sorter>
-             <uni-data-table-filter value="{{column.Filter$}}">
-             </uni-data-table-filter>
-         </template>
-         <template>
-             <input type="email" value="{{item.Email.Address$::input}}" placeholder="Email">
-         </template>
-     </uni-data-table-column>
- </uni-data-table>
+<input type="email" value="{{item.Email.Address$::input}}" placeholder="Email">
 ```
 
 More about custom definition of the table columns you can find in the [`uni-data-table` CE documentation](https://github.com/Starcounter/uniform/tree/master/components/uni-data-table)
