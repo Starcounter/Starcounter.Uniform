@@ -13,14 +13,12 @@ namespace Starcounter.Uniform.ViewModels
         public const string SortDescendingString = "desc";
 
         public IFilteredDataProvider<Json> DataProvider { get; set; }
-
         private bool _isDisposed = false;
 
         public UniDataTable Init(IFilteredDataProvider<Json> dataProvider, IEnumerable<DataTableColumn> sourceColumns, int initialPageSize, int initialPageIndex)
         {
             CheckDisposed();
             this.DataProvider = dataProvider;
-
             Pagination.DataProvider = dataProvider;
             Pagination.LoadRows = LoadRows;
             Pagination.LoadRowsFromFirstPage = LoadRowsFromFirstPage;
@@ -68,6 +66,18 @@ namespace Starcounter.Uniform.ViewModels
             }
 
             this.TotalRows = this.DataProvider.TotalRows;
+        }
+
+        public void RemoveRow(Json rowToDelete)
+        {
+            // Check if the data object was deleted before removing the row.
+            // User has to delete data object first so that row can be removed correctly.
+            if(Db.FromId(rowToDelete.Data.GetObjectNo()) != null)
+            {
+                throw new InvalidOperationException("You have to delete the data model of the row first, before removing it from the table.");
+            }
+
+            this.LoadRows();
         }
 
         public void Dispose()
