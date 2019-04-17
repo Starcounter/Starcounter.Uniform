@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using Starcounter.Linq;
 using Starcounter.Uniform.Builder;
 using Starcounter.Uniform.Generic.FilterAndSort;
 using Starcounter.Uniform.Generic.Pagination;
@@ -19,21 +21,27 @@ namespace Starcounter.Uniform.Queryables
         private readonly IQueryableFilter<TData> _filter;
         private readonly IQueryablePaginator<TData, TViewModel> _paginator;
 
-        private readonly IQueryable<TData> _dataSource;
+        //private readonly IQueryable<TData> _dataSource;
+        private readonly Expression<Func<IQueryable<TData>>> _dataSource;
+
+        private IEnumerable<TData> _dataSourceEnumerable;
 
         private readonly Converter<TData, TViewModel> _converter;
         private IReadOnlyCollection<TViewModel> _currentPageRows;
         private bool _isDisposed = false;
-        private IQueryable<TData> _filteredData;
+        //private IQueryable<TData> _filteredData;
+        private Expression<Func<IQueryable<TData>>> _filteredData;
 
         public FilteredPaginatedDataProvider(IQueryableFilter<TData> filter,
             IQueryablePaginator<TData, TViewModel> paginator,
-            IQueryable<TData> dataSource,
+            //IQueryable<TData> dataSource,
+            Expression<Func<IQueryable<TData>>> dataSource,
             Converter<TData, TViewModel> converter)
         {
             _filter = filter;
             _paginator = paginator;
             _dataSource = dataSource;
+            _dataSourceEnumerable = DbLinq.CompileQuery(dataSource)();
             _converter = converter;
         }
 
@@ -52,7 +60,7 @@ namespace Starcounter.Uniform.Queryables
                 CheckDisposed();
                 ApplyFilters();
                 DisposeOfRows();
-                _currentPageRows = _paginator.GetRows(_filteredData, PaginationConfiguration, _converter);
+                _currentPageRows = _paginator.GetRows(/*_filteredData*/_dataSourceEnumerable, PaginationConfiguration, _converter);
                 return _currentPageRows;
             }
         }
@@ -64,7 +72,7 @@ namespace Starcounter.Uniform.Queryables
             {
                 CheckDisposed();
                 ApplyFilters();
-                return _paginator.GetTotalRows(_filteredData);
+                return _paginator.GetTotalRows(/*_filteredData*/_dataSourceEnumerable);
             }
         }
 
@@ -84,6 +92,8 @@ namespace Starcounter.Uniform.Queryables
         private void ApplyFilters()
         {
             _filteredData = _filter.Apply(_dataSource, FilterOrderConfiguration);
+            Func<IEnumerable<TData>> compileQuery = DbLinq.CompileQuery(_filteredData);
+            _dataSourceEnumerable = compileQuery();
         }
 
         private void DisposeOfRows()

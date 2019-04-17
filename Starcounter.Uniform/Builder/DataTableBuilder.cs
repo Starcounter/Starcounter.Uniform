@@ -3,6 +3,7 @@ using Starcounter.Uniform.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace Starcounter.Uniform.Builder
 {
@@ -28,14 +29,14 @@ namespace Starcounter.Uniform.Builder
         /// <param name="configure">Configures the details of the data source</param>
         /// <returns>The original builder object</returns>
         /// <remarks>This method changes and returns the original builder object</remarks>
-        public DataTableBuilder<TViewModel> WithDataSource<TData>(IQueryable<TData> queryable, Action<DataProviderBuilder<TData, TViewModel>> configure)
-        {
-            var builder = new DataProviderBuilder<TData, TViewModel>(queryable);
-            configure(builder);
-            _dataProvider = builder.Build();
+        //public DataTableBuilder<TViewModel> WithDataSource<TData>(Expression<Func<IQueryable<TData>>> queryable, Action<DataProviderBuilder<TData, TViewModel>> configure)
+        //{
+        //    var builder = new DataProviderBuilder<TData, TViewModel>(queryable);
+        //    configure(builder);
+        //    _dataProvider = builder.Build();
 
-            return this;
-        }
+        //    return this;
+        //}
 
         /// <summary>
         /// Specify the data source for the table
@@ -44,9 +45,13 @@ namespace Starcounter.Uniform.Builder
         /// <param name="queryable">The original data to expose</param>
         /// <returns>The original builder object</returns>
         /// <remarks>This method changes and returns the original builder object</remarks>
-        public DataTableBuilder<TViewModel> WithDataSource<TData>(IQueryable<TData> queryable)
+        public DataTableBuilder<TViewModel> WithDataSource<TData>(Expression<Func<IQueryable<TData>>> queryable)
         {
-            return WithDataSource(queryable, builder => { });
+            var builder = new DataProviderBuilder<TData, TViewModel>(queryable);
+            //configure(builder);
+            _dataProvider = builder.Build();
+
+            return this;
         }
 
         /// <summary>
@@ -116,6 +121,5 @@ namespace Starcounter.Uniform.Builder
 
             return new UniDataTable().Init(_dataProvider, _columns, _initialPageSize, _initialPageIndex);
         }
-
     }
 }

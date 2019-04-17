@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Starcounter.Linq;
 
 namespace Starcounter.Uniform.Queryables
 {
@@ -13,17 +14,18 @@ namespace Starcounter.Uniform.Queryables
     /// <typeparam name="TData"></typeparam>
     public class QueryableFilter<TData> : IQueryableFilter<TData>
     {
-        public IQueryable<TData> Apply(IQueryable<TData> data, FilterOrderConfiguration configuration)
+        public Expression<Func<IQueryable<TData>>> Apply(Expression<Func<IQueryable<TData>>> data,
+            FilterOrderConfiguration configuration)
         {
             if (data == null) throw new ArgumentNullException(nameof(data));
             if (configuration == null) throw new ArgumentNullException(nameof(configuration));
 
             data = ApplyFilters(data, configuration.Filters);
-            data = ApplyOrdering(data, configuration.Ordering);
+            //data = ApplyOrdering(data, configuration.Ordering);
             return data;
         }
 
-        private IQueryable<TData> ApplyFilters(IQueryable<TData> data, ICollection<Filter> filters)
+        private Expression<Func<IQueryable<TData>>> ApplyFilters(Expression<Func<IQueryable<TData>>> data, ICollection<Filter> filters)
         {
             foreach (var filter in filters)
             {
@@ -49,7 +51,8 @@ namespace Starcounter.Uniform.Queryables
         /// <param name="data"></param>
         /// <param name="filter"></param>
         /// <returns>A new queryable, representing filtered data</returns>
-        protected virtual IQueryable<TData> ApplyFilter(IQueryable<TData> data, Filter filter)
+        protected virtual Expression<Func<IQueryable<TData>>> ApplyFilter(Expression<Func<IQueryable<TData>>> data,
+            Filter filter)
         {
             if (filter == null) throw new ArgumentNullException(nameof(filter));
 
@@ -63,11 +66,16 @@ namespace Starcounter.Uniform.Queryables
             {
                 var lambda = Expression.Lambda<Func<TData, bool>>(filterMethodExp, parameterExpression);
 
-                return data.Where(lambda);
+                MethodInfo whereMethodInfo = typeof(Queryable).GetMethods().Where(x => x.Name == "Where" && x.GetParameters().Count() == 2).First();
+                whereMethodInfo = whereMethodInfo.MakeGenericMethod(typeof(TData));
+                MethodCallExpression tt = Expression.Call(null, whereMethodInfo, data.Body, lambda);
+                Expression<Func<IQueryable<TData>>> tr = Expression.Lambda<Func<IQueryable<TData>>>(tt);
+
+                return tr;
             }
             else
             {
-                return Enumerable.Empty<TData>().AsQueryable();
+                return data;
             }
         }
 

@@ -7,19 +7,21 @@ namespace Starcounter.Uniform.Queryables
 {
     public class QueryablePaginator<TData, TViewModel> : IQueryablePaginator<TData, TViewModel>
     {
-        public IReadOnlyCollection<TViewModel> GetRows(IQueryable<TData> data,
+        public IReadOnlyCollection<TViewModel> GetRows(
+            //IQueryable<TData> data,
+            IEnumerable<TData> data,
             PaginationConfiguration paginationConfiguration,
             Converter<TData, TViewModel> converter)
         {
             return data
                 .Skip(paginationConfiguration.PageSize * paginationConfiguration.CurrentPageIndex)
                 .Take(paginationConfiguration.PageSize)
-                .AsEnumerable()
+                //.AsEnumerable()
                 .Select(dataRow => converter(dataRow))
                 .ToList();
         }
 
-        public int GetTotalRows(IQueryable<TData> data)
+        public int GetTotalRows(/*IQueryable<TData> data*/IEnumerable<TData> data)
         {
             return data.Count();
         }

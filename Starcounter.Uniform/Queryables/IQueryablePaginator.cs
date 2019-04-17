@@ -15,10 +15,11 @@ namespace Starcounter.Uniform.Queryables
     public interface IQueryablePaginator<TData, TViewModel>
     {
         IReadOnlyCollection<TViewModel> GetRows(
-            IQueryable<TData> data,
+            //IQueryable<TData> data,
+            IEnumerable<TData> data,
             PaginationConfiguration paginationConfiguration,
             Converter<TData, TViewModel> converter);
 
-        int GetTotalRows(IQueryable<TData> data);
+        int GetTotalRows(/*IQueryable<TData> data*/ IEnumerable<TData> data);
     }
 }

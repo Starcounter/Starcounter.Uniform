@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Linq.Expressions;
 using Starcounter.Uniform.Queryables;
 
 namespace Starcounter.Uniform.Builder
@@ -12,7 +13,8 @@ namespace Starcounter.Uniform.Builder
     public class DataProviderBuilder<TData, TViewModel>
         where TViewModel : Json, new()
     {
-        private readonly IQueryable<TData> _queryable;
+        //private readonly IQueryable<TData> _queryable;
+        private readonly Expression<Func<IQueryable<TData>>> _queryable;
         private IQueryableFilter<TData> _filter;
         private Converter<TData, TViewModel> _converter;
 
@@ -21,7 +23,14 @@ namespace Starcounter.Uniform.Builder
         /// </summary>
         /// <param name="queryable"></param>
         /// <remarks>This class is not intended to be constructed by app developers directly. Rather, they should use it as part of <see cref="DataTableBuilder{TViewModel}"/></remarks>
-        public DataProviderBuilder(IQueryable<TData> queryable)
+        //public DataProviderBuilder(IQueryable<TData> queryable)
+        //{
+        //    _queryable = queryable;
+        //    _filter = new QueryableFilter<TData>();
+        //    _converter = DefaultConverter;
+        //}
+
+        public DataProviderBuilder(Expression<Func<IQueryable<TData>>> queryable)
         {
             _queryable = queryable;
             _filter = new QueryableFilter<TData>();
