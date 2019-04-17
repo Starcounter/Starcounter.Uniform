@@ -121,7 +121,7 @@ public class BookFilter : QueryableFilter<Book>
     {
         // We used string.Compare method to ignore diacritics in the strings.
         return data.ToList().Where(book => string.Compare(book.Author, filter.Value, CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace) == 0
-                                || string.Compare(book.Title, filter.Value, CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace) == 0);
+                                || string.Compare(book.Title, filter.Value, CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace) == 0).AsQueryable();
     }
 
     return base.ApplyFilter(data, filter);
