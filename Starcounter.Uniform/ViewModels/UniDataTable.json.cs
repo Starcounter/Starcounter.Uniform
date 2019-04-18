@@ -51,6 +51,11 @@ namespace Starcounter.Uniform.ViewModels
 
             var newRowsData = new PagesViewModel();
 
+            if (this.DataProvider.CurrentPageRows.Count == 0 && this.DataProvider.PaginationConfiguration.CurrentPageIndex > 0)
+            {
+                this.DataProvider.PaginationConfiguration.CurrentPageIndex -= 1;
+            }
+
             foreach (var currentPageRow in this.DataProvider.CurrentPageRows)
             {
                 newRowsData.Rows.Add(currentPageRow);
