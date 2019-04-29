@@ -114,31 +114,52 @@ If you want to support filtering and/or sorting by this column, you have to exte
 ```c#
 public class BookFilter : QueryableFilter<Book>
 {
-  protected override IQueryable<Book> ApplyFilter(IQueryable<Book> data, Filter filter)
-  {
-    if (filter == null) throw new ArgumentNullException(nameof(filter));
-    if (filter.PropertyName == nameof(BookViewModel.Display))
+    protected override IQueryable<Book> ApplyFilter(IQueryable<Book> data, Filter filter)
     {
-        // We used string.Compare method to ignore diacritics in the strings.
-        return data.ToList().Where(book => string.Compare(book.Author, filter.Value, CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace) == 0
-                                || string.Compare(book.Title, filter.Value, CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace) == 0).AsQueryable();
+        if (filter == null) throw new ArgumentNullException(nameof(filter));
+
+        if (filter.PropertyName == nameof(BookViewModel.Display))
+        {
+            // We used string.Compare method to ignore diacritics in the strings.
+            CultureInfo cultureInfo = CultureInfo.CurrentCulture;
+            CompareOptions compareOptions = CompareOptions.IgnoreNonSpace;
+
+            return data.ToList().Where
+            (
+                book => 
+                    string.Compare(book.Author, filter.Value, cultureInfo, compareOptions) == 0
+                    ||
+                    string.Compare(book.Title, filter.Value, cultureInfo, compareOptions) == 0
+            ).AsQueryable();
+        }
+
+        return base.ApplyFilter(data, filter);
     }
 
-    return base.ApplyFilter(data, filter);
-  }
-  
-  protected override IQueryable<Book> ApplyOrder(IQueryable<Book> data, Order order)
-  {
-    if (order == null) throw new ArgumentNullException(nameof(order));
-    if (order.PropertyName == nameof(BookViewModel.Display))
+    protected override IQueryable<Book> ApplyOrder(IQueryable<Book> data, Order order)
     {
-      return order.Direction == OrderDirection.Ascending ?
-        data.OrderBy(book => book.Author).ThenBy(book => book.Title) :
-        data.OrderByDescending(book => book.Author).ThenByDescending(book => book.Title);
+        if (order == null) throw new ArgumentNullException(nameof(order));
+
+        if (order.PropertyName == nameof(BookViewModel.Display))
+        {
+            IQueryable<Book> query;
+
+            if (order.Direction == OrderDirection.Ascending)
+            {
+                query = data.OrderBy(book => book.Author)
+                    .ThenBy(book => book.Title);
+            }
+            else
+            {
+                query = data.OrderByDescending(book => book.Author)
+                    .ThenByDescending(book => book.Title);
+            }
+
+            return query;
+        }
+
+        return base.ApplyOrder(data, order);
     }
-    
-    return base.ApplyOrder(data, order);
-  }
 }
 ```
 
