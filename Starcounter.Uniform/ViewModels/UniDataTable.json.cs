@@ -24,6 +24,7 @@ namespace Starcounter.Uniform.ViewModels
             Pagination.DataProvider = dataProvider;
             Pagination.LoadRows = LoadRows;
             Pagination.LoadRowsFromFirstPage = LoadRowsFromFirstPage;
+            Pagination.GetTotalRows = () => (int)TotalRows;
 
             this.DataProvider.PaginationConfiguration = new PaginationConfiguration(initialPageSize, initialPageIndex);
             this.DataProvider.FilterOrderConfiguration = new FilterOrderConfiguration();
@@ -114,10 +115,11 @@ namespace Starcounter.Uniform.ViewModels
             public IFilteredDataProvider<Json> DataProvider { get; set; }
             public Action LoadRows { get; set; }
             public Action LoadRowsFromFirstPage { get; set; }
+            public Func<int> GetTotalRows { get; set; }
 
             public int PageSize => DataProvider?.PaginationConfiguration.PageSize ?? 0;
 
-            public int PagesCount => (DataProvider?.TotalRows + DataProvider?.PaginationConfiguration.PageSize - 1) /
+            public int PagesCount => (GetTotalRows() + DataProvider?.PaginationConfiguration.PageSize - 1) /
                                      DataProvider?.PaginationConfiguration.PageSize ?? 0;
 
             public void Handle(Input.CurrentPageIndex action)
