@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Starcounter.Uniform.Generic.FilterAndSort
 {
@@ -7,8 +8,18 @@ namespace Starcounter.Uniform.Generic.FilterAndSort
     /// </summary>
     public class FilterOrderConfiguration
     {
-        public List<Filter> Filters { get; } = new List<Filter>();
-        public List<Order> Ordering { get; } = new List<Order>();
+        public FilterOrderConfiguration()
+        {
+        }
 
+        public FilterOrderConfiguration(Order order, IEnumerable<Filter> filters)
+        {
+            Order = order;
+            Filters = filters.ToList();
+        }
+
+        public List<Filter> Filters { get; } = new List<Filter>();
+
+        public Order Order { get; set; }
     }
 }

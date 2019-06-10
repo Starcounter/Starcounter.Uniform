@@ -19,7 +19,7 @@ namespace Starcounter.Uniform.Queryables
             if (configuration == null) throw new ArgumentNullException(nameof(configuration));
 
             data = ApplyFilters(data, configuration.Filters);
-            data = ApplyOrdering(data, configuration.Ordering);
+            data = ApplyOrder(data, configuration.Order);
             return data;
         }
 
@@ -28,16 +28,6 @@ namespace Starcounter.Uniform.Queryables
             foreach (var filter in filters)
             {
                 data = ApplyFilter(data, filter);
-            }
-
-            return data;
-        }
-
-        private IQueryable<TData> ApplyOrdering(IQueryable<TData> data, ICollection<Order> ordering)
-        {
-            foreach (var order in ordering)
-            {
-                data = ApplyOrder(data, order);
             }
 
             return data;
@@ -79,7 +69,8 @@ namespace Starcounter.Uniform.Queryables
         /// <returns>A new queryable, representing filtered data</returns>
         protected virtual IQueryable<TData> ApplyOrder(IQueryable<TData> data, Order order)
         {
-            if (order == null) throw new ArgumentNullException(nameof(order));
+            if (order == null)
+                return data;
             if (order.Direction != OrderDirection.Ascending && order.Direction != OrderDirection.Descending)
             {
                 throw new ArgumentOutOfRangeException(nameof(order), $"Invalid value for {nameof(order)}: '{order}'");

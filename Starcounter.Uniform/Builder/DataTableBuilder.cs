@@ -3,6 +3,7 @@ using Starcounter.Uniform.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace Starcounter.Uniform.Builder
 {
@@ -19,6 +20,7 @@ namespace Starcounter.Uniform.Builder
         private IReadOnlyCollection<DataTableColumn> _columns = new DataTableColumn[0];
         private int _initialPageIndex;
         private int _initialPageSize = DefaultPageSize;
+        private Order _initialOrder = null;
 
         /// <summary>
         /// Specify the data source for the table
@@ -107,6 +109,34 @@ namespace Starcounter.Uniform.Builder
             return this;
         }
 
+        /// <summary>
+        /// Specify the initial sort order for the table. If this method is never called the table will initially be unsorted.
+        /// </summary>
+        /// <param name="propertySelector">
+        /// A function whose body is a <see cref="MemberExpression"/> referencing the property to sort by.
+        /// </param>
+        /// <param name="direction">The direction of the sort (ascending or descending).</param>
+        /// <returns>The original builder object augmented with the specified sort order.</returns>
+        public DataTableBuilder<TViewModel> WithInitialOrder<TProperty>(
+            Expression<Func<TViewModel, TProperty>> propertySelector,
+            OrderDirection direction = OrderDirection.Ascending
+        )
+        {
+            var memberExpr = propertySelector.Body as MemberExpression;
+            if (memberExpr == null)
+            {
+                throw new ArgumentException(
+                    $"Expected a {nameof(MemberExpression)} as function body.",
+                    nameof(propertySelector));
+            }
+            _initialOrder = new Order()
+            {
+                PropertyName = memberExpr.Member.Name,
+                Direction = direction
+            };
+            return this;
+        }
+
         public UniDataTable Build()
         {
             if (_dataProvider == null)
@@ -114,7 +144,7 @@ namespace Starcounter.Uniform.Builder
                 throw new InvalidOperationException($"DataSource has not been configured. Call one of {nameof(WithDataSource)} overloads before calling {nameof(Build)}");
             }
 
-            return new UniDataTable().Init(_dataProvider, _columns, _initialPageSize, _initialPageIndex);
+            return new UniDataTable().Init(_dataProvider, _columns, _initialPageSize, _initialPageIndex, _initialOrder);
         }
     }
 }

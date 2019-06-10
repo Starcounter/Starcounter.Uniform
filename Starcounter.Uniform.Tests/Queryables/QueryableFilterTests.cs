@@ -26,7 +26,7 @@ namespace Starcounter.Uniform.Tests.Queryables
             }.AsQueryable();
         }
 
-        private IQueryable<RowDataModel> ApplyFilteringOrdering(IEnumerable<Filter> filters = null, IEnumerable<Order> orderings = null)
+        private IQueryable<RowDataModel> ApplyFilteringOrdering(IEnumerable<Filter> filters = null, Order order = null)
         {
             var filterOrderConfiguration = new FilterOrderConfiguration();
 
@@ -38,13 +38,7 @@ namespace Starcounter.Uniform.Tests.Queryables
                 }
             }
 
-            if (orderings != null)
-            {
-                foreach (var ordering in orderings)
-                {
-                    filterOrderConfiguration.Ordering.Add(ordering);
-                }
-            }
+            filterOrderConfiguration.Order = order;
 
             var returnedData = _sut.Apply(_rowDataModels, filterOrderConfiguration);
 
@@ -129,7 +123,7 @@ namespace Starcounter.Uniform.Tests.Queryables
         public void ApplyingOrderingShouldReturnProperRowsDatasOrdered()
         {
             var order = new Order { PropertyName = nameof(RowDataModel.Name), Direction = OrderDirection.Ascending };
-            var returnedData = ApplyFilteringOrdering(null, new[] { order });
+            var returnedData = ApplyFilteringOrdering(null, order);
 
             returnedData.Select(model => model.Name).Should().BeInAscendingOrder();
         }
@@ -138,35 +132,9 @@ namespace Starcounter.Uniform.Tests.Queryables
         public void ApplyingIntOrderingShouldReturnProperRowsDatasOrdered()
         {
             var order = new Order { PropertyName = nameof(RowDataModel.Number), Direction = OrderDirection.Ascending };
-            var returnedData = ApplyFilteringOrdering(null, new[] { order });
+            var returnedData = ApplyFilteringOrdering(null, order);
 
             returnedData.Select(model => model.Number).Should().BeInAscendingOrder();
-        }
-
-        [Test]
-        public void ApplyingMultipleOrderingShouldReturnProperRowsDatasOrdered()
-        {
-            _rowDataModels = new List<RowDataModel>
-            {
-                new RowDataModel {Name = "Tom", Number = 0},
-                new RowDataModel {Name = "Ann", Number = 2},
-                new RowDataModel {Name = "Clark", Number = 1},
-                new RowDataModel {Name = "Amanda", Number = 2}
-            }.AsQueryable();
-
-            var expectedOrderedData = new List<RowDataModel>
-            {
-                new RowDataModel {Name = "Tom", Number = 0},
-                new RowDataModel {Name = "Clark", Number = 1},
-                new RowDataModel {Name = "Amanda", Number = 2},
-                new RowDataModel {Name = "Ann", Number = 2}
-            }.AsQueryable();
-
-            var nameOrder = new Order { PropertyName = "Name", Direction = OrderDirection.Ascending };
-            var numberOrder = new Order { PropertyName = "Number", Direction = OrderDirection.Ascending };
-            var returnedData = ApplyFilteringOrdering(null, new[] { nameOrder, numberOrder });
-
-            returnedData.Should().BeEquivalentTo(expectedOrderedData, options => options.WithStrictOrdering());
         }
 
         [Test]
@@ -181,7 +149,7 @@ namespace Starcounter.Uniform.Tests.Queryables
             var filter = new Filter { PropertyName = "Name", Value = "A" };
             var order = new Order { PropertyName = "Name", Direction = OrderDirection.Ascending };
 
-            var returnedData = ApplyFilteringOrdering(new[] { filter }, new[] { order });
+            var returnedData = ApplyFilteringOrdering(new[] { filter }, order);
 
             returnedData.Should().BeEquivalentTo(expectedOrderedData, options => options.WithStrictOrdering());
         }

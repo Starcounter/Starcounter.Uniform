@@ -16,7 +16,7 @@ namespace Starcounter.Uniform.ViewModels
 
         private bool _isDisposed = false;
 
-        public UniDataTable Init(IFilteredDataProvider<Json> dataProvider, IEnumerable<DataTableColumn> sourceColumns, int initialPageSize, int initialPageIndex)
+        public UniDataTable Init(IFilteredDataProvider<Json> dataProvider, IEnumerable<DataTableColumn> sourceColumns, int initialPageSize, int initialPageIndex, Order initialOrder)
         {
             CheckDisposed();
             this.DataProvider = dataProvider;
@@ -27,7 +27,7 @@ namespace Starcounter.Uniform.ViewModels
             Pagination.GetTotalRows = () => (int)TotalRows;
 
             this.DataProvider.PaginationConfiguration = new PaginationConfiguration(initialPageSize, initialPageIndex);
-            this.DataProvider.FilterOrderConfiguration = new FilterOrderConfiguration();
+            this.DataProvider.FilterOrderConfiguration = new FilterOrderConfiguration(initialOrder, new Filter[0]);
 
             PopulateColumns(sourceColumns);
             LoadRows();
@@ -147,8 +147,6 @@ namespace Starcounter.Uniform.ViewModels
         [UniDataTable_json.Columns]
         public partial class ColumnsViewModel : Json, IBound<DataTableColumn>
         {
-            private string _sortValue = null;
-
             public IFilteredDataProvider<Json> DataProvider { get; set; }
             public Action LoadRowsFromFirstPage { get; set; }
 
@@ -162,15 +160,18 @@ namespace Starcounter.Uniform.ViewModels
             /// </summary>
             public string Sort
             {
-                get => _sortValue;
-                set => _sortValue = string.IsNullOrWhiteSpace(value) ? null : value;
+                get
+                {
+                    var order = this.DataProvider.FilterOrderConfiguration.Order;
+                    return order != null && order.PropertyName == this.PropertyName
+                        ? FormatOrderDirection(order.Direction)
+                        : null;
+                }
             }
 
             public void Handle(Input.Filter action)
             {
-                var filter =
-                    DataProvider.FilterOrderConfiguration.Filters.FirstOrDefault(x =>
-                        x.PropertyName == this.PropertyName);
+                var filter = FindFilterForThisProperty();
                 if (filter != null)
                 {
                     if (!string.IsNullOrEmpty(action.Value))
@@ -194,32 +195,27 @@ namespace Starcounter.Uniform.ViewModels
                 LoadRowsFromFirstPage?.Invoke();
             }
 
+            private Filter FindFilterForThisProperty() =>
+                this.DataProvider
+                    .FilterOrderConfiguration
+                    .Filters
+                    .FirstOrDefault(x => x.PropertyName == this.PropertyName);
+
             public void Handle(Input.Sort action)
             {
-                OrderDirection? direction = ParseOrderDirection(action.Value);
-                Order order = this.DataProvider.FilterOrderConfiguration.Ordering.FirstOrDefault(x => x.PropertyName == this.PropertyName);
+                var direction = ParseOrderDirection(action.Value);
+                var config = this.DataProvider.FilterOrderConfiguration;
 
                 if (!direction.HasValue)
                 {
-                    if (order != null)
-                    {
-                        this.DataProvider.FilterOrderConfiguration.Ordering.Remove(order);
-                    }
-
+                    config.Order = null;
                     return;
                 }
 
-                if (order == null)
-                {
-                    order = new Order()
-                    {
-                        PropertyName = this.PropertyName
-                    };
-
-                    this.DataProvider.FilterOrderConfiguration.Ordering.Add(order);
-                }
-
-                order.Direction = direction.Value;
+                if (config.Order == null)
+                    config.Order = new Order();
+                config.Order.PropertyName = this.PropertyName;
+                config.Order.Direction = direction.Value;
 
                 LoadRowsFromFirstPage?.Invoke();
             }
@@ -236,6 +232,18 @@ namespace Starcounter.Uniform.ViewModels
                 }
 
                 return null;
+            }
+
+            private static string FormatOrderDirection(OrderDirection direction)
+            {
+                switch (direction)
+                {
+                    case OrderDirection.Ascending: return UniDataTable.SortAscendingString;
+                    case OrderDirection.Descending: return UniDataTable.SortDescendingString;
+                    default:
+                        throw new ArgumentException(
+                            "Invalid order direction.", nameof(direction));
+                }
             }
         }
 
