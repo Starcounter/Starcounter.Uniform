@@ -22,24 +22,47 @@ namespace Starcounter.Uniform.ViewModels
             this.DataProvider = dataProvider;
 
             Pagination.DataProvider = dataProvider;
+            Pagination.LoadRowsForCurrentPage = LoadRowsForCurrentPage;
             Pagination.LoadRows = LoadRows;
-            Pagination.LoadRowsFromFirstPage = LoadRowsFromFirstPage;
             Pagination.GetTotalRows = () => (int)TotalRows;
 
             this.DataProvider.PaginationConfiguration = new PaginationConfiguration(initialPageSize, initialPageIndex);
             this.DataProvider.FilterOrderConfiguration = new FilterOrderConfiguration(initialOrder, new Filter[0]);
 
             PopulateColumns(sourceColumns);
-            LoadRows();
+            LoadRowsForCurrentPage();
 
             return this;
+        }
+
+        /// <summary>
+        /// Returns to the first page and reloads rows from the data source.
+        /// Use this method to refresh the table after changing the query.
+        /// </summary>
+        public void LoadRows()
+        {
+            this.DataProvider.PaginationConfiguration.CurrentPageIndex = 0;
+            this.Pagination.CurrentPageIndex = 0;
+            this.Pages.Clear();
+
+            this.LoadRowsForCurrentPage();
+        }
+
+        public void Dispose()
+        {
+            if (_isDisposed)
+            {
+                return;
+            }
+            DataProvider?.Dispose();
+            _isDisposed = true;
         }
 
         /// <summary>
         /// Loads rows for CurrentPageIndex from <see cref="PaginationConfiguration"/>. 
         /// When page is bigger than zero this method will add missing dummy pages to maintain sparse page indicies in Pages collection.
         /// </summary>
-        public void LoadRows()
+        private void LoadRowsForCurrentPage()
         {
             CheckDisposed();
             var page = this.DataProvider.PaginationConfiguration.CurrentPageIndex;
@@ -71,14 +94,15 @@ namespace Starcounter.Uniform.ViewModels
             this.TotalRows = this.DataProvider.TotalRows;
         }
 
-        public void Dispose()
+        private void PopulateColumns(IEnumerable<DataTableColumn> sourceColumns)
         {
-            if (_isDisposed)
+            foreach (var sourceColumn in sourceColumns)
             {
-                return;
+                var column = this.Columns.Add();
+                column.Data = sourceColumn;
+                column.DataProvider = this.DataProvider;
+                column.LoadRowsFromFirstPage = LoadRows;
             }
-            DataProvider?.Dispose();
-            _isDisposed = true;
         }
 
         private void CheckDisposed()
@@ -89,32 +113,12 @@ namespace Starcounter.Uniform.ViewModels
             }
         }
 
-        private void LoadRowsFromFirstPage()
-        {
-            this.DataProvider.PaginationConfiguration.CurrentPageIndex = 0;
-            this.Pagination.CurrentPageIndex = 0;
-            this.Pages.Clear();
-
-            this.LoadRows();
-        }
-
-        private void PopulateColumns(IEnumerable<DataTableColumn> sourceColumns)
-        {
-            foreach (var sourceColumn in sourceColumns)
-            {
-                var column = this.Columns.Add();
-                column.Data = sourceColumn;
-                column.DataProvider = this.DataProvider;
-                column.LoadRowsFromFirstPage = LoadRowsFromFirstPage;
-            }
-        }
-
         [UniDataTable_json.Pagination]
         public partial class PaginationViewModel : Json
         {
             public IFilteredDataProvider<Json> DataProvider { get; set; }
+            public Action LoadRowsForCurrentPage { get; set; }
             public Action LoadRows { get; set; }
-            public Action LoadRowsFromFirstPage { get; set; }
             public Func<int> GetTotalRows { get; set; }
 
             public int PageSize => DataProvider?.PaginationConfiguration.PageSize ?? 0;
@@ -134,13 +138,13 @@ namespace Starcounter.Uniform.ViewModels
                     DataProvider.PaginationConfiguration.CurrentPageIndex = newPageIndex > PagesCount ? PagesCount : newPageIndex;
                 }
 
-                LoadRows?.Invoke();
+                LoadRowsForCurrentPage?.Invoke();
             }
 
             public void Handle(Input.PageSize action)
             {
                 DataProvider.PaginationConfiguration.PageSize = (int)action.Value;
-                LoadRowsFromFirstPage?.Invoke();
+                LoadRows?.Invoke();
             }
         }
 
